@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Google Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Grotesk', ui-monospace, monospace;
+
+  --color-coral: #B94B3E;
+  --color-coral-light: #E06051;
+  --color-coral-dark: #9E382D;
+}
+
+/* Custom Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFFFFF;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B94B3E;
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+  background-color: #FFFFFF;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  letter-spacing: -0.015em;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Clean White Glassmorphic Cards */
+.cred-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cred-card:hover {
+  background: #FFFFFF;
+  border-color: rgba(185, 75, 62, 0.4);
+  box-shadow: 0 20px 35px -10px rgba(185, 75, 62, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-4px);
+}
+
+.cred-panel {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.06);
+}
+
+/* SVG Laser Border Button - Pure Transparent with Red Tracing Line */
+.svg-laser-btn {
+  position: relative;
+  background: transparent !important;
+  outline: none;
+  overflow: visible;
+  transition: color 0.3s ease;
+}
+
+.svg-laser-btn:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.svg-laser-btn .hl-line {
+  stroke-dasharray: 25 100;
+  stroke-dashoffset: 25;
+  transition: stroke-dashoffset 0.75s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.3s ease;
+}
+
+.svg-laser-btn:hover .hl-line {
+  stroke-dashoffset: -100 !important;
+  stroke: #B94B3E !important;
+  filter: drop-shadow(0 0 5px rgba(185, 75, 62, 0.7));
+}
+
+/* SVG Stroke Outline Trim Path Drawing Animation (Matching Lottie) */
+.stroke-draw-line1 {
+  stroke: #0F172A;
+  stroke-width: 2.2px;
+  stroke-dasharray: 650;
+  stroke-dashoffset: 650;
+  fill: transparent;
+  animation: drawLine1 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.stroke-draw-line2 {
+  stroke: #B94B3E;
+  stroke-width: 2.4px;
+  stroke-dasharray: 650;
+  stroke-dashoffset: 650;
+  fill: transparent;
+  animation: drawLine2 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  filter: drop-shadow(0 0 6px rgba(185, 75, 62, 0.4));
+}
+
+@keyframes drawLine1 {
+  0% {
+    stroke-dashoffset: 650;
+    fill: transparent;
+    stroke: #0F172A;
+  }
+  65% {
+    stroke-dashoffset: 0;
+    fill: transparent;
+    stroke: #0F172A;
+  }
+  85%, 100% {
+    stroke-dashoffset: 0;
+    fill: #0F172A;
+    stroke: #0F172A;
+  }
+}
+
+@keyframes drawLine2 {
+  0% {
+    stroke-dashoffset: 650;
+    fill: transparent;
+    stroke: #B94B3E;
+  }
+  65% {
+    stroke-dashoffset: 0;
+    fill: transparent;
+    stroke: #E06051;
+  }
+  85%, 100% {
+    stroke-dashoffset: 0;
+    fill: #B94B3E;
+    stroke: #B94B3E;
+  }
+}
+
+/* Text Gradients */
+.text-gradient-coral {
+  background: linear-gradient(135deg, #0F172A 0%, #B94B3E 60%, #E06051 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
