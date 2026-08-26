@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tttBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B1329" />
+      <stop offset="50%" stop-color="#111D42" />
+      <stop offset="100%" stop-color="#0B1329" />
+    </linearGradient>
+    <linearGradient id="xGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D2FF" />
+      <stop offset="100%" stop-color="#0088FF" />
+    </linearGradient>
+    <linearGradient id="oGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B94B3E" />
+      <stop offset="100%" stop-color="#FF6B5B" />
+    </linearGradient>
+    <filter id="tttGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="450" fill="url(#tttBg)" />
+
+  <!-- Ambient Glow -->
+  <circle cx="650" cy="150" r="140" fill="#00D2FF" opacity="0.12" filter="url(#tttGlow)" />
+  <circle cx="150" cy="300" r="130" fill="#B94B3E" opacity="0.12" filter="url(#tttGlow)" />
+
+  <!-- Browser Window Frame -->
+  <g transform="translate(50, 30)">
+    <rect width="700" height="390" rx="16" fill="#0E1630" stroke="#1E2B58" stroke-width="1.5" />
+    
+    <!-- Top Bar -->
+    <rect width="700" height="44" rx="16" fill="#152042" />
+    <path d="M0 30 h700 v14 h-700 Z" fill="#152042" />
+    <circle cx="24" cy="22" r="5" fill="#EF4444" />
+    <circle cx="40" cy="22" r="5" fill="#F59E0B" />
+    <circle cx="56" cy="22" r="5" fill="#10B981" />
+    
+    <rect x="80" y="10" width="300" height="24" rx="6" fill="#0A1024" stroke="#223366" stroke-width="1" />
+    <text x="96" y="26" fill="#7DD3FC" font-family="system-ui, sans-serif" font-size="11" font-weight="500">https://github.com/bhanu962/tic-tac-toe</text>
+    
+    <rect x="580" y="11" width="105" height="22" rx="11" fill="#00D2FF" fill-opacity="0.15" stroke="#00D2FF" stroke-width="1" />
+    <text x="595" y="26" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="10" font-weight="700">SOLO WEB APP</text>
+
+    <!-- Main Game Area -->
+    <g transform="translate(30, 65)">
+      <!-- Left Side: Title & Scoreboard -->
+      <g transform="translate(10, 20)">
+        <text x="0" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="22" font-weight="800">Tic Tac Toe Game</text>
+        <text x="0" y="46" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="12" font-weight="400">Interactive turn-based logic with state detection.</text>
+        
+        <!-- Scoreboard Box -->
+        <rect x="0" y="70" width="260" height="110" rx="12" fill="#131F45" stroke="#223366" stroke-width="1" />
+        
+        <rect x="20" y="85" width="100" height="40" rx="8" fill="#0A1024" />
+        <text x="32" y="102" fill="#00D2FF" font-family="system-ui, sans-serif" font-size="10" font-weight="700">PLAYER X</text>
+        <text x="32" y="118" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="800">4 Wins</text>
+
+        <rect x="140" y="85" width="100" height="40" rx="8" fill="#0A1024" />
+        <text x="152" y="102" fill="#FF6B5B" font-family="system-ui, sans-serif" font-size="10" font-weight="700">PLAYER O</text>
+        <text x="152" y="118" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="800">2 Wins</text>
+
+        <!-- Turn status -->
+        <rect x="20" y="138" width="220" height="28" rx="14" fill="#00D2FF" fill-opacity="0.15" stroke="#00D2FF" stroke-width="1" />
+        <text x="65" y="156" fill="#38BDF8" font-family="system-ui, sans-serif" font-size="11" font-weight="700">PLAYER X's TURN</text>
+      </g>
+
+      <!-- Right Side: 3x3 Grid Board -->
+      <g transform="translate(340, 10)">
+        <rect width="280" height="260" rx="16" fill="#131F45" stroke="#223366" stroke-width="1" />
+        
+        <!-- Grid Cells -->
+        <!-- Row 1 -->
+        <rect x="20" y="15" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- X -->
+        <path d="M40 35 L70 65 M70 35 L40 65" stroke="url(#xGrad)" stroke-width="6" stroke-linecap="round" />
+
+        <rect x="105" y="15" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- O -->
+        <circle cx="140" cy="50" r="16" fill="none" stroke="url(#oGrad)" stroke-width="6" />
+
+        <rect x="190" y="15" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- X -->
+        <path d="M210 35 L240 65 M240 35 L210 65" stroke="url(#xGrad)" stroke-width="6" stroke-linecap="round" />
+
+        <!-- Row 2 -->
+        <rect x="20" y="95" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- O -->
+        <circle cx="55" cy="130" r="16" fill="none" stroke="url(#oGrad)" stroke-width="6" />
+
+        <rect x="105" y="95" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- X -->
+        <path d="M125 115 L155 145 M155 115 L125 145" stroke="url(#xGrad)" stroke-width="6" stroke-linecap="round" />
+
+        <rect x="190" y="95" width="70" height="70" rx="10" fill="#0A1024" />
+        
+        <!-- Row 3 -->
+        <rect x="20" y="175" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- X -->
+        <path d="M40 195 L70 225 M70 195 L40 225" stroke="url(#xGrad)" stroke-width="6" stroke-linecap="round" />
+
+        <rect x="105" y="175" width="70" height="70" rx="10" fill="#0A1024" />
+        <!-- O -->
+        <circle cx="140" cy="210" r="16" fill="none" stroke="url(#oGrad)" stroke-width="6" />
+
+        <rect x="190" y="175" width="70" height="70" rx="10" fill="#0A1024" />
+      </g>
+    </g>
+  </g>
+</svg>

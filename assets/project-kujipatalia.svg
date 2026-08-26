@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="forestBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1f13" />
+      <stop offset="60%" stop-color="#143d24" />
+      <stop offset="100%" stop-color="#0d2417" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+    <linearGradient id="emeraldBtn" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E4D32" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#113320" stop-opacity="0.95" />
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="800" height="450" fill="url(#forestBg)" />
+
+  <!-- Ambient Glows -->
+  <circle cx="700" cy="120" r="160" fill="#10B981" opacity="0.18" filter="url(#softGlow)" />
+  <circle cx="120" cy="360" r="140" fill="#FBBF24" opacity="0.12" filter="url(#softGlow)" />
+
+  <!-- Browser Frame -->
+  <g transform="translate(45, 30)">
+    <!-- Main Window Background -->
+    <rect width="710" height="390" rx="16" fill="#08180E" stroke="#22543D" stroke-width="1.5" />
+
+    <!-- Browser Header Bar -->
+    <rect width="710" height="44" rx="16" fill="#122E1F" />
+    <path d="M0 30 h710 v14 h-710 Z" fill="#122E1F" />
+    
+    <!-- Window Controls -->
+    <circle cx="24" cy="22" r="5" fill="#EF4444" />
+    <circle cx="40" cy="22" r="5" fill="#F59E0B" />
+    <circle cx="56" cy="22" r="5" fill="#10B981" />
+
+    <!-- Browser URL Bar -->
+    <rect x="80" y="10" width="370" height="24" rx="6" fill="#0A1E14" stroke="#22543D" stroke-width="1" />
+    <text x="96" y="26" fill="#A7F3D0" font-family="system-ui, sans-serif" font-size="11" font-weight="500">https://kujipatalia.onrender.com</text>
+
+    <!-- Top Right Badges -->
+    <rect x="585" y="11" width="105" height="22" rx="11" fill="#10B981" fill-opacity="0.15" stroke="#10B981" stroke-width="1" />
+    <circle cx="598" cy="22" r="3.5" fill="#10B981" />
+    <text x="608" y="26" fill="#6EE7B7" font-family="system-ui, sans-serif" font-size="10" font-weight="700">LIVE D2C STORE</text>
+
+    <!-- Inner Web Page Content -->
+    <g transform="translate(25, 60)">
+      
+      <!-- Top Navigation Bar in Store -->
+      <rect x="0" y="0" width="660" height="42" rx="8" fill="#123824" fill-opacity="0.6" stroke="#22543D" stroke-width="1" />
+      
+      <!-- Logo -->
+      <circle cx="22" cy="21" r="12" fill="url(#goldGradient)" />
+      <text x="17" y="26" fill="#064E3B" font-family="system-ui, sans-serif" font-size="14" font-weight="900">K</text>
+      
+      <text x="44" y="25" fill="#F0FDF4" font-family="system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="0.5">KUJIPATALIA ORGANIC RICE</text>
+      
+      <!-- Nav Items -->
+      <text x="360" y="25" fill="#A7F3D0" font-family="system-ui, sans-serif" font-size="11" font-weight="600">Store</text>
+      <text x="410" y="25" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="11" font-weight="500">Heirlooms</text>
+      <text x="480" y="25" fill="#94A3B8" font-family="system-ui, sans-serif" font-size="11" font-weight="500">Dashboard</text>
+      
+      <!-- Cart Pill -->
+      <rect x="560" y="10" width="85" height="22" rx="11" fill="url(#emeraldBtn)" />
+      <text x="578" y="25" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="10" font-weight="700">Cart (3)</text>
+
+      <!-- Hero Header Section -->
+      <g transform="translate(0, 56)">
+        <rect x="0" y="0" width="660" height="95" rx="10" fill="#0E281A" stroke="#1E4D32" stroke-width="1" />
+        
+        <!-- Hero Text -->
+        <rect x="18" y="12" width="135" height="18" rx="9" fill="#F59E0B" fill-opacity="0.15" stroke="#F59E0B" stroke-width="0.8" />
+        <text x="26" y="25" fill="#FBBF24" font-family="system-ui, sans-serif" font-size="9" font-weight="700">DIRECT FARM HARVEST</text>
+        
+        <text x="18" y="52" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="17" font-weight="800">Pure Vedic Heirloom Rice • Odisha Cultivators</text>
+        <text x="18" y="72" fill="#A7F3D0" font-family="system-ui, sans-serif" font-size="10.5" font-weight="400">Naturally cultivated, unpolished organic harvest delivered fresh to your door with live tracking.</text>
+
+        <!-- Right Side Badges -->
+        <g transform="translate(490, 16)">
+          <rect x="0" y="0" width="150" height="64" rx="8" fill="#143825" stroke="#2D6A4F" stroke-width="1" />
+          <text x="14" y="24" fill="#6EE7B7" font-family="system-ui, sans-serif" font-size="10" font-weight="700">✓ 100% Organic Certified</text>
+          <text x="14" y="42" fill="#FDE68A" font-family="system-ui, sans-serif" font-size="10" font-weight="700">✓ Instant PDF Invoice</text>
+          <text x="14" y="56" fill="#93C5FD" font-family="system-ui, sans-serif" font-size="9.5" font-weight="600">✓ OTP Fast Checkout</text>
+        </g>
+      </g>
+
+      <!-- Product Cards Grid (3 Real Varieties from Store) -->
+      <g transform="translate(0, 165)">
+        
+        <!-- Card 1: Organic Sona Masoori -->
+        <g transform="translate(0, 0)">
+          <rect width="206" height="150" rx="10" fill="url(#cardGrad)" stroke="#22543D" stroke-width="1" />
+          <circle cx="30" cy="28" r="14" fill="#FBBF24" fill-opacity="0.2" />
+          <ellipse cx="30" cy="28" rx="5" ry="10" fill="#FBBF24" />
+          <text x="52" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700">Sona Masoori Rice</text>
+          <text x="52" y="36" fill="#6EE7B7" font-family="system-ui, sans-serif" font-size="9" font-weight="500">Unpolished • Aromatic</text>
+          
+          <rect x="14" y="52" width="178" height="42" rx="6" fill="#0A1F13" />
+          <text x="24" y="70" fill="#E2E8F0" font-family="system-ui, sans-serif" font-size="9.5">Weight: 5kg / 10kg Bag</text>
+          <text x="24" y="84" fill="#FBBF24" font-family="system-ui, sans-serif" font-size="11" font-weight="800">₹399 <tspan fill="#94A3B8" font-size="9" font-weight="400">/ 5kg</tspan></text>
+
+          <rect x="14" y="104" width="178" height="30" rx="15" fill="url(#emeraldBtn)" />
+          <text x="68" y="123" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="10" font-weight="700">Add to Cart</text>
+        </g>
+
+        <!-- Card 2: Organic Wada Kolam -->
+        <g transform="translate(226, 0)">
+          <rect width="206" height="150" rx="10" fill="url(#cardGrad)" stroke="#22543D" stroke-width="1" />
+          <circle cx="30" cy="28" r="14" fill="#34D399" fill-opacity="0.2" />
+          <ellipse cx="30" cy="28" rx="6" ry="9" fill="#34D399" />
+          <text x="52" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700">Wada Kolam Rice</text>
+          <text x="52" y="36" fill="#6EE7B7" font-family="system-ui, sans-serif" font-size="9" font-weight="500">Short Grain • Vedic</text>
+          
+          <rect x="14" y="52" width="178" height="42" rx="6" fill="#0A1F13" />
+          <text x="24" y="70" fill="#E2E8F0" font-family="system-ui, sans-serif" font-size="9.5">Weight: 5kg / 10kg Bag</text>
+          <text x="24" y="84" fill="#FBBF24" font-family="system-ui, sans-serif" font-size="11" font-weight="800">₹449 <tspan fill="#94A3B8" font-size="9" font-weight="400">/ 5kg</tspan></text>
+
+          <rect x="14" y="104" width="178" height="30" rx="15" fill="url(#emeraldBtn)" />
+          <text x="68" y="123" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="10" font-weight="700">Add to Cart</text>
+        </g>
+
+        <!-- Card 3: Heirloom Black Rice -->
+        <g transform="translate(452, 0)">
+          <rect width="206" height="150" rx="10" fill="url(#cardGrad)" stroke="#22543D" stroke-width="1" />
+          <circle cx="30" cy="28" r="14" fill="#A78BFA" fill-opacity="0.2" />
+          <ellipse cx="30" cy="28" rx="5" ry="10" fill="#A78BFA" />
+          <text x="52" y="24" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700">Royal Black Rice</text>
+          <text x="52" y="36" fill="#C4B5FD" font-family="system-ui, sans-serif" font-size="9" font-weight="500">Antioxidant Heirloom</text>
+          
+          <rect x="14" y="52" width="178" height="42" rx="6" fill="#0A1F13" />
+          <text x="24" y="70" fill="#E2E8F0" font-family="system-ui, sans-serif" font-size="9.5">Weight: 1kg / 2kg Pack</text>
+          <text x="24" y="84" fill="#FBBF24" font-family="system-ui, sans-serif" font-size="11" font-weight="800">₹299 <tspan fill="#94A3B8" font-size="9" font-weight="400">/ 1kg</tspan></text>
+
+          <rect x="14" y="104" width="178" height="30" rx="15" fill="url(#emeraldBtn)" />
+          <text x="68" y="123" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="10" font-weight="700">Add to Cart</text>
+        </g>
+
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="100%" height="100%">
+  <defs>
+    <linearGradient id="ecomBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050C1A" />
+      <stop offset="50%" stop-color="#08182B" />
+      <stop offset="100%" stop-color="#03060F" />
+    </linearGradient>
+
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00D2FF" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+
+    <filter id="sneakerGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base UI Background -->
+  <rect width="1200" height="750" rx="16" fill="url(#ecomBg)" stroke="#1E3250" stroke-width="2" />
+
+  <!-- Navbar -->
+  <rect x="0" y="0" width="1200" height="60" rx="16" fill="#071324" />
+  <circle cx="40" cy="30" r="7" fill="#EF4444" opacity="0.8" />
+  <circle cx="65" cy="30" r="7" fill="#F59E0B" opacity="0.8" />
+  <circle cx="90" cy="30" r="7" fill="#10B981" opacity="0.8" />
+  <text x="140" y="36" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-weight="900" font-size="16">CYBER<tspan fill="#00D2FF">KICKS</tspan></text>
+
+  <!-- Left Product Info -->
+  <g transform="translate(80, 150)">
+    <text x="0" y="40" fill="#00D2FF" font-family="'Space Grotesk', sans-serif" font-size="14" letter-spacing="3" font-weight="bold">NEW REVOLUTION EDITION</text>
+    <text x="0" y="110" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-size="52" font-weight="900" letter-spacing="-1">E-Commerce</text>
+    <text x="0" y="170" fill="#FFFFFF" font-family="'Outfit', sans-serif" font-size="52" font-weight="900" letter-spacing="-1">Platform</text>
+    <text x="0" y="220" fill="#94A3B8" font-family="sans-serif" font-size="16">Next-Gen Quantum Air Sole with dynamic traction</text>
+    
+    <!-- Price & Action -->
+    <text x="0" y="290" fill="#00D2FF" font-family="'Space Grotesk', sans-serif" font-size="36" font-weight="bold">$249.00</text>
+    <rect x="0" y="320" width="180" height="50" rx="25" fill="url(#cyanGrad)" />
+    <text x="90" y="352" fill="#03050B" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="bold" text-anchor="middle">PRE-ORDER NOW</text>
+  </g>
+
+  <!-- Right Floating Sneaker Showcase -->
+  <g transform="translate(620, 140)">
+    <!-- Radial Backlight Glow -->
+    <ellipse cx="250" cy="220" rx="280" ry="180" fill="rgba(0, 210, 255, 0.15)" filter="url(#sneakerGlow)" />
+    <ellipse cx="250" cy="240" rx="180" ry="70" fill="rgba(168, 85, 247, 0.15)" filter="url(#sneakerGlow)" />
+    
+    <!-- Stylized Dark Sneaker Illustration -->
+    <g transform="rotate(-15 250 200)">
+      <!-- Sole Bottom -->
+      <path d="M 50,280 C 120,310 280,310 420,270 C 470,255 490,230 480,210 C 460,195 430,200 400,215 C 260,250 140,240 70,225 C 40,220 30,240 50,280 Z" fill="#0B1320" stroke="#00D2FF" stroke-width="3" />
+      <path d="M 80,280 C 180,295 320,290 420,265" fill="none" stroke="#22D3EE" stroke-width="4" filter="url(#sneakerGlow)" />
+
+      <!-- Sneaker Body -->
+      <path d="M 70,225 C 100,160 200,130 290,150 C 340,110 390,95 440,130 C 470,160 480,210 400,215 C 260,250 140,240 70,225 Z" fill="#111827" stroke="#1F2937" stroke-width="2" />
+      <!-- Cyber Swoop Lines -->
+      <path d="M 180,180 Q 280,160 360,195" fill="none" stroke="#00D2FF" stroke-width="5" stroke-linecap="round" />
+      <path d="M 200,205 Q 270,190 330,210" fill="none" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" />
+      
+      <!-- Laces & Eyelets -->
+      <line x1="280" y1="140" x2="310" y2="165" stroke="#00D2FF" stroke-width="3" />
+      <line x1="300" y1="130" x2="330" y2="155" stroke="#00D2FF" stroke-width="3" />
+      <line x1="320" y1="120" x2="350" y2="145" stroke="#00D2FF" stroke-width="3" />
+    </g>
+  </g>
+</svg>

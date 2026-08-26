@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- 100% Transparent Background -->
+  <!-- Modern Geometric Hexagon / Rounded Shield Outline -->
+  <rect x="4" y="4" width="92" height="92" rx="24" fill="none" stroke="#B94B3E" stroke-width="5" stroke-linecap="round" />
+  
+  <!-- Sleek BN Monogram in Coral #B94B3E -->
+  <text x="50" y="66" font-family="'Outfit', 'Space Grotesk', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="44" fill="#B94B3E" text-anchor="middle" letter-spacing="-1">BN</text>
+  
+  <!-- Subtle glowing dot -->
+  <circle cx="80" cy="62" r="5" fill="#E06051" />
+</svg>
