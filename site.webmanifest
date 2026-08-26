@@ -1,0 +1,16 @@
+{
+  "name": "Bhanu Narra Portfolio",
+  "short_name": "bhanunarra",
+  "description": "Official Portfolio of Bhanu Narra (bhanunarra) - Computer Science Engineer & Full Stack Developer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#B94B3E",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
