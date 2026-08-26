@@ -147,7 +147,7 @@ export default function Hero({ playHover, playClick }) {
         >
           {/* Primary Static Lead Title */}
           <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-bold font-display tracking-tight text-slate-950 leading-tight">
-            Welcome to Bhanu's Portfolio
+            Welcome to Bhanu Narra's Portfolio
           </h1>
 
           {/* Physically Locked Fixed-Height Container for the Animated Typing Line */}

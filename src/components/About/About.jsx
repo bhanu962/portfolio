@@ -131,7 +131,7 @@ export default function About({ playHover }) {
               <div className="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-2xl bg-slate-100">
                 <img
                   src="/assets/bhanu-portrait.jpg"
-                  alt="Bhanu Sai Teja Narra"
+                  alt="Bhanu Narra (bhanunarra) - Computer Science Engineer & Full Stack Developer"
                   className="w-full h-full object-cover object-top transition-transform duration-700 ease-out hover:scale-105"
                   loading="eager"
                 />
