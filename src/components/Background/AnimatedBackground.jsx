@@ -15,13 +15,16 @@ export default function AnimatedBackground() {
         }}
       />
 
-      {/* 2. Soft Breathing Aurora Light Orbs */}
+      {/* 2. Soft Breathing Aurora Light Orbs (Optimized GPU Radial Gradients) */}
       {/* Top Center Coral Aura */}
       <motion.div
-        className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[550px] bg-gradient-to-tr from-red-200/25 via-orange-100/20 to-transparent rounded-full blur-[140px]"
+        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[550px] rounded-full pointer-events-none gpu-layer"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(239, 68, 68, 0.09) 0%, rgba(251, 146, 60, 0.05) 45%, transparent 70%)',
+        }}
         animate={{
-          scale: [1, 1.08, 1],
-          opacity: [0.6, 0.85, 0.6],
+          scale: [1, 1.05, 1],
+          opacity: [0.7, 0.95, 0.7],
         }}
         transition={{
           duration: 12,
@@ -32,10 +35,13 @@ export default function AnimatedBackground() {
 
       {/* Left Ambient Glow */}
       <motion.div
-        className="absolute top-1/3 -left-32 w-[500px] h-[500px] bg-gradient-to-r from-red-100/30 to-amber-100/20 rounded-full blur-[150px]"
+        className="absolute top-1/3 -left-32 w-[500px] h-[500px] rounded-full pointer-events-none gpu-layer"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(185, 75, 62, 0.07) 0%, rgba(245, 158, 11, 0.04) 50%, transparent 70%)',
+        }}
         animate={{
-          x: [0, 40, 0],
-          y: [0, -30, 0],
+          x: [0, 25, 0],
+          y: [0, -20, 0],
         }}
         transition={{
           duration: 16,
@@ -46,10 +52,13 @@ export default function AnimatedBackground() {
 
       {/* Bottom Right Sky Glow */}
       <motion.div
-        className="absolute -bottom-24 -right-24 w-[600px] h-[600px] bg-gradient-to-l from-sky-100/25 via-red-50/20 to-transparent rounded-full blur-[160px]"
+        className="absolute -bottom-24 -right-24 w-[600px] h-[600px] rounded-full pointer-events-none gpu-layer"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(56, 189, 248, 0.07) 0%, rgba(239, 68, 68, 0.04) 50%, transparent 70%)',
+        }}
         animate={{
-          scale: [1, 1.1, 1],
-          x: [0, -30, 0],
+          scale: [1, 1.06, 1],
+          x: [0, -20, 0],
         }}
         transition={{
           duration: 18,

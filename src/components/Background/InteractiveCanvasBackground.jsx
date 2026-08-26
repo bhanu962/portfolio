@@ -7,23 +7,33 @@ export default function InteractiveCanvasBackground() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
     let animationFrameId;
+    let isRunning = true;
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
+    const isMobile = width < 768;
+    const particleCount = isMobile ? 20 : 34;
+    const maxDist = 110;
+    const maxDistSq = maxDist * maxDist;
+
     const handleResize = () => {
+      if (!canvas) return;
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
-    // Mouse tracking with smooth damping
+    // Mouse tracking with soft radius
     const mouse = {
-      x: null,
-      y: null,
-      radius: 120,
+      x: -1000,
+      y: -1000,
+      radius: 110,
+      radiusSq: 110 * 110,
     };
 
     const handleMouseMove = (e) => {
@@ -32,17 +42,15 @@ export default function InteractiveCanvasBackground() {
     };
 
     const handleMouseLeave = () => {
-      mouse.x = null;
-      mouse.y = null;
+      mouse.x = -1000;
+      mouse.y = -1000;
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseleave', handleMouseLeave);
 
-    // Particle setup
-    const particleCount = Math.min(Math.floor((width * height) / 18000), 55);
+    // Particle definitions
     const particles = [];
-
     const colors = [
       'rgba(185, 75, 62, 0.35)', // Coral #B94B3E
       'rgba(224, 96, 81, 0.30)', // Soft Coral
@@ -54,39 +62,43 @@ export default function InteractiveCanvasBackground() {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        radius: Math.random() * 2 + 1.2,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        baseRadius: Math.random() * 2 + 1.2,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 1.5 + 1.2,
+        color: colors[i % colors.length],
+        baseRadius: Math.random() * 1.5 + 1.2,
       });
     }
 
     // Animation Loop
     const render = () => {
+      if (!isRunning) return;
+
       ctx.clearRect(0, 0, width, height);
 
-      // Draw particle connections (Constellation effect)
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+      // 1. Draw connecting lines in single batched path
+      ctx.lineWidth = 0.75;
+      ctx.strokeStyle = 'rgba(185, 75, 62, 0.12)';
+      ctx.beginPath();
 
-          if (dist < 130) {
-            const alpha = (1 - dist / 130) * 0.15;
-            ctx.strokeStyle = `rgba(185, 75, 62, ${alpha})`;
-            ctx.lineWidth = 0.8;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
+      for (let i = 0; i < particleCount; i++) {
+        const p1 = particles[i];
+        for (let j = i + 1; j < particleCount; j++) {
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < maxDistSq) {
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
           }
         }
       }
+      ctx.stroke();
 
-      // Draw & Update Particles
-      for (let i = 0; i < particles.length; i++) {
+      // 2. Update & draw particles
+      for (let i = 0; i < particleCount; i++) {
         const p = particles[i];
 
         // Move
@@ -94,23 +106,22 @@ export default function InteractiveCanvasBackground() {
         p.y += p.vy;
 
         // Bounce on boundaries
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
+        if (p.x < 0 || p.x > width) p.vx = -p.vx;
+        if (p.y < 0 || p.y > height) p.vy = -p.vy;
 
-        // Mouse interaction (soft attraction / displacement)
-        if (mouse.x !== null && mouse.y !== null) {
-          const dx = mouse.x - p.x;
-          const dy = mouse.y - p.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+        // Soft mouse interaction
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const mouseDistSq = dx * dx + dy * dy;
 
-          if (dist < mouse.radius) {
-            const force = (1 - dist / mouse.radius) * 0.02;
-            p.x += dx * force;
-            p.y += dy * force;
-            p.radius = p.baseRadius * 1.5;
-          } else {
-            p.radius = p.baseRadius;
-          }
+        if (mouseDistSq < mouse.radiusSq && mouseDistSq > 0) {
+          const mouseDist = Math.sqrt(mouseDistSq);
+          const force = (1 - mouseDist / mouse.radius) * 0.025;
+          p.x += dx * force;
+          p.y += dy * force;
+          p.radius = p.baseRadius * 1.35;
+        } else {
+          p.radius = p.baseRadius;
         }
 
         // Draw particle node
@@ -123,12 +134,28 @@ export default function InteractiveCanvasBackground() {
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    // Tab visibility handling: pause when hidden to save CPU/battery
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        isRunning = false;
+        cancelAnimationFrame(animationFrameId);
+      } else {
+        if (!isRunning) {
+          isRunning = true;
+          animationFrameId = requestAnimationFrame(render);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
+      isRunning = false;
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -136,7 +163,7 @@ export default function InteractiveCanvasBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-10"
+      className="absolute inset-0 w-full h-full pointer-events-none z-10 gpu-layer"
     />
   );
 }

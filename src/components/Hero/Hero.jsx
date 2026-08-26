@@ -27,7 +27,7 @@ const socialDockItems = [
   { name: 'Instagram', href: personalInfo.socials.instagram, icon: Instagram },
 ];
 
-export default function Hero({ playHover, playClick }) {
+function TypingHeadline() {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [currentText, setCurrentText] = useState(dynamicPhrases[0]);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,6 +56,20 @@ export default function Hero({ playHover, playClick }) {
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, phraseIndex]);
 
+  return (
+    <div className="h-14 sm:h-18 lg:h-20 w-full flex items-center justify-center text-center overflow-hidden">
+      <span className="text-gradient-coral inline text-2xl sm:text-4xl lg:text-[44px] font-bold font-display tracking-tight leading-tight">
+        {currentText}
+        <span
+          className="inline-block w-[3px] sm:w-[4px] h-[0.78em] ml-1.5 bg-[#B94B3E] align-baseline rounded-xs animate-pulse shadow-[0_0_8px_#B94B3E]"
+          style={{ verticalAlign: '-0.04em' }}
+        />
+      </span>
+    </div>
+  );
+}
+
+export default function Hero({ playHover, playClick }) {
   const handleDownloadCV = () => {
     if (playClick) playClick();
   };
@@ -137,15 +151,7 @@ export default function Hero({ playHover, playClick }) {
           </h1>
 
           {/* Physically Locked Fixed-Height Container for the Animated Typing Line */}
-          <div className="h-14 sm:h-18 lg:h-20 w-full flex items-center justify-center text-center overflow-hidden">
-            <span className="text-gradient-coral inline text-2xl sm:text-4xl lg:text-[44px] font-bold font-display tracking-tight leading-tight">
-              {currentText}
-              <span
-                className="inline-block w-[3px] sm:w-[4px] h-[0.78em] ml-1.5 bg-[#B94B3E] align-baseline rounded-xs animate-pulse shadow-[0_0_8px_#B94B3E]"
-                style={{ verticalAlign: '-0.04em' }}
-              />
-            </span>
-          </div>
+          <TypingHeadline />
         </motion.div>
 
         {/* 3. Refined Bio Subtitle - Permanently Fixed in Place */}
