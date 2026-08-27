@@ -69,6 +69,8 @@ export default function CustomCursor() {
   const lastPosRef = useRef({ x: -100, y: -100, time: 0 });
   const timeoutsRef = useRef(new Set());
   const currentModeRef = useRef(POINTER_ANIMATION_MODES[0]);
+  const isTouchActiveRef = useRef(false);
+  const fadeTimeoutRef = useRef(null);
 
   // Framer Motion Spring Values for ultra-fluid cursor tracking
   const mouseX = useMotionValue(-100);
@@ -83,11 +85,9 @@ export default function CustomCursor() {
   useEffect(() => {
     let modeIndex = 0;
     const interval = setInterval(() => {
-      // Pick next website brand color
       const nextColor = WEBSITE_PALETTE[Math.floor(Math.random() * WEBSITE_PALETTE.length)];
       setCurrentColor(nextColor);
 
-      // Cycle to next morph animation mode
       modeIndex = (modeIndex + 1) % POINTER_ANIMATION_MODES.length;
       const nextMode = POINTER_ANIMATION_MODES[modeIndex];
       currentModeRef.current = nextMode;
@@ -109,8 +109,11 @@ export default function CustomCursor() {
   useEffect(() => {
     document.body.classList.add('hide-cursor');
 
-    const handleMouseMove = (e) => {
-      const { clientX: x, clientY: y } = e;
+    const processPointerMove = (x, y) => {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
+
       mouseX.set(x);
       mouseY.set(y);
 
@@ -156,8 +159,40 @@ export default function CustomCursor() {
       }
     };
 
+    // Mouse Event Handlers
+    const handleMouseMove = (e) => {
+      processPointerMove(e.clientX, e.clientY);
+    };
+
     const handleMouseDown = () => setIsMouseDown(true);
     const handleMouseUp = () => setIsMouseDown(false);
+
+    // Mobile / Touch Event Handlers
+    const handleTouchStart = (e) => {
+      if (e.touches && e.touches[0]) {
+        isTouchActiveRef.current = true;
+        const touch = e.touches[0];
+        setIsMouseDown(true);
+        processPointerMove(touch.clientX, touch.clientY);
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        const touch = e.touches[0];
+        processPointerMove(touch.clientX, touch.clientY);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      isTouchActiveRef.current = false;
+      setIsMouseDown(false);
+      fadeTimeoutRef.current = setTimeout(() => {
+        if (!isTouchActiveRef.current) {
+          setIsVisible(false);
+        }
+      }, 1200);
+    };
 
     const handleMouseOver = (e) => {
       const target = e.target.closest('[data-cursor]');
@@ -186,12 +221,19 @@ export default function CustomCursor() {
     const handleMouseLeave = () => setIsVisible(false);
     const handleMouseEnter = () => setIsVisible(true);
 
+    // Desktop Mouse Listeners
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseleave', handleMouseLeave);
     document.addEventListener('mouseenter', handleMouseEnter);
+
+    // Mobile Touch Listeners
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
     return () => {
       document.body.classList.remove('hide-cursor');
@@ -201,14 +243,21 @@ export default function CustomCursor() {
       window.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
+
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
+
       timeoutsRef.current.forEach((tId) => clearTimeout(tId));
       timeoutsRef.current.clear();
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
     };
   }, [isVisible]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden select-none">
-      {/* 1. Razor-Sharp Dotted Monospace Symbol Trail */}
+      {/* 1. Razor-Sharp Dotted Monospace Symbol Trail (Follows Mouse & Finger Drag) */}
       {trail.map((point) => (
         <span
           key={point.id}
