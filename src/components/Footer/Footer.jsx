@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
+import Magnetic from '../UI/Magnetic';
 import { personalInfo } from '../../data/personalInfo';
 
 export default function Footer({ playHover, playClick }) {
@@ -34,23 +35,25 @@ export default function Footer({ playHover, playClick }) {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         {/* Left */}
         <div className="flex flex-col items-center md:items-start gap-1">
-          <a
-            href="#home"
-            onClick={scrollToTop}
-            onMouseEnter={playHover}
-            className="flex items-center gap-2 group cursor-pointer select-none bg-transparent"
-            data-cursor="click"
-          >
-            {/* Transparent Icon Logo Box */}
-            <div className="w-7 h-7 rounded-lg border border-[#B94B3E]/40 flex items-center justify-center bg-transparent group-hover:border-[#B94B3E] transition-all">
-              <span className="font-display font-extrabold text-[11px] tracking-tight text-[#B94B3E]">
-                BN
+          <Magnetic strength={0.25} radius={70}>
+            <a
+              href="#home"
+              onClick={scrollToTop}
+              onMouseEnter={playHover}
+              className="flex items-center gap-2 group cursor-pointer select-none bg-transparent"
+              data-cursor="click"
+            >
+              {/* Transparent Icon Logo Box */}
+              <div className="w-7 h-7 rounded-lg border border-[#B94B3E]/40 flex items-center justify-center bg-transparent group-hover:border-[#B94B3E] transition-all">
+                <span className="font-display font-extrabold text-[11px] tracking-tight text-[#B94B3E]">
+                  BN
+                </span>
+              </div>
+              <span className="text-lg font-bold font-display tracking-tight text-slate-900 group-hover:text-[#B94B3E] transition-colors">
+                {personalInfo.name}
               </span>
-            </div>
-            <span className="text-lg font-bold font-display tracking-tight text-slate-900 group-hover:text-[#B94B3E] transition-colors">
-              {personalInfo.name}
-            </span>
-          </a>
+            </a>
+          </Magnetic>
           <p className="text-xs text-slate-500 font-mono">
             © {new Date().getFullYear()} {personalInfo.fullName}. All rights reserved.
           </p>
@@ -66,15 +69,17 @@ export default function Footer({ playHover, playClick }) {
 
         {/* Right: Back to Top */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={scrollToTop}
-            onMouseEnter={playHover}
-            className="p-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-all group cursor-pointer"
-            title="Back to Top"
-            data-cursor="hover"
-          >
-            <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
-          </button>
+          <Magnetic strength={0.3} radius={60}>
+            <button
+              onClick={scrollToTop}
+              onMouseEnter={playHover}
+              className="p-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-all group cursor-pointer"
+              title="Back to Top"
+              data-cursor="hover"
+            >
+              <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
+          </Magnetic>
         </div>
       </div>
     </footer>

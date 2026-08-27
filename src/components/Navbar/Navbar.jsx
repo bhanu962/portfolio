@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX, Menu, X, ArrowUpRight } from 'lucide-react';
 import SvgButton from '../UI/SvgButton';
+import Magnetic from '../UI/Magnetic';
 import { personalInfo } from '../../data/personalInfo';
+import { playWelcomeAudio } from '../../utils/speech';
 
 const navLinks = [
   { name: 'Home', href: '#home' },
@@ -13,7 +15,7 @@ const navLinks = [
   { name: 'Contact', href: '#contact' },
 ];
 
-export default function Navbar({ soundEnabled, toggleSound, playHover, playClick }) {
+export default function Navbar({ soundPlaying, toggleAudio, playHover, playClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -72,95 +74,124 @@ export default function Navbar({ soundEnabled, toggleSound, playHover, playClick
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           {/* Logo with 100% Transparent Background */}
-          <motion.a
-            href="#home"
-            onClick={(e) => handleNavClick(e, '#home')}
-            onMouseEnter={playHover}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="flex items-center gap-2.5 group cursor-pointer bg-transparent select-none"
-            data-cursor="click"
-          >
-            {/* Transparent Icon Logo Box */}
-            <div className="w-8 h-8 rounded-lg border-1.5 border-[#B94B3E]/40 flex items-center justify-center bg-transparent group-hover:border-[#B94B3E] transition-all">
-              <span className="font-display font-extrabold text-xs tracking-tight text-[#B94B3E]">
-                BN
-              </span>
-            </div>
+          <Magnetic strength={0.25} radius={80}>
+            <motion.a
+              href="#home"
+              onClick={(e) => handleNavClick(e, '#home')}
+              onMouseEnter={playHover}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="flex items-center gap-2.5 group cursor-pointer bg-transparent select-none"
+              data-cursor="click"
+            >
+              {/* Transparent Icon Logo Box */}
+              <div className="w-8 h-8 rounded-lg border-1.5 border-[#B94B3E]/40 flex items-center justify-center bg-transparent group-hover:border-[#B94B3E] transition-all">
+                <span className="font-display font-extrabold text-xs tracking-tight text-[#B94B3E]">
+                  BN
+                </span>
+              </div>
 
-            <span className="text-lg sm:text-xl font-bold font-display tracking-tight text-slate-900 group-hover:text-[#B94B3E] transition-colors">
-              {personalInfo.name}
-            </span>
-          </motion.a>
+              <span className="text-lg sm:text-xl font-bold font-display tracking-tight text-slate-900 group-hover:text-[#B94B3E] transition-colors">
+                {personalInfo.name}
+              </span>
+            </motion.a>
+          </Magnetic>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-1 p-1 rounded-full bg-slate-100/80 border border-slate-200/60 backdrop-blur-md">
             {navLinks.map((link) => {
               const isActive = activeSection === link.href.substring(1);
               return (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  onMouseEnter={playHover}
-                  whileHover={{ y: -1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`relative px-4 py-1.5 text-xs font-medium tracking-wide transition-all rounded-full ${
-                    isActive
-                      ? 'text-slate-900 font-semibold bg-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                  data-cursor="hover"
-                >
-                  {link.name}
-                </motion.a>
+                <Magnetic key={link.name} strength={0.2} radius={60}>
+                  <motion.a
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    onMouseEnter={playHover}
+                    whileHover={{ y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative px-4 py-1.5 text-xs font-medium tracking-wide transition-all rounded-full ${
+                      isActive
+                        ? 'text-slate-900 font-semibold bg-white shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                    }`}
+                    data-cursor="hover"
+                  >
+                    {link.name}
+                  </motion.a>
+                </Magnetic>
               );
             })}
           </nav>
 
           {/* Right Action Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <motion.button
-              onClick={() => {
-                if (toggleSound) toggleSound();
-                if (playClick) playClick();
-              }}
-              onMouseEnter={playHover}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
-              title={soundEnabled ? 'Mute Audio FX' : 'Enable Audio FX'}
-              aria-label="Toggle Sound"
-              data-cursor="hover"
-            >
-              {soundEnabled ? (
-                <Volume2 className="w-4 h-4 text-[#B94B3E] animate-pulse" />
-              ) : (
-                <VolumeX className="w-4 h-4 text-slate-400" />
-              )}
-            </motion.button>
+            <Magnetic strength={0.25} radius={60}>
+              <motion.button
+                onClick={() => {
+                  if (playClick) playClick();
+                  if (toggleAudio) toggleAudio();
+                }}
+                onMouseEnter={playHover}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all duration-300 cursor-pointer ${
+                  soundPlaying
+                    ? 'bg-[#B94B3E]/10 border-[#B94B3E]/40 text-[#B94B3E] shadow-sm'
+                    : 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200'
+                }`}
+                title={soundPlaying ? 'Click to stop audio' : 'Click to play welcome audio'}
+                aria-label="Toggle Sound"
+                data-cursor="hover"
+              >
+                {soundPlaying ? (
+                  <>
+                    <Volume2 className="w-3.5 h-3.5 text-[#B94B3E]" />
+                    {/* Live Animated Waveform Equalizer Bars */}
+                    <div className="flex items-center gap-[2px] h-3">
+                      <span className="w-[2.5px] h-full bg-[#B94B3E] rounded-full animate-equalizer-1" />
+                      <span className="w-[2.5px] h-full bg-[#B94B3E] rounded-full animate-equalizer-2" />
+                      <span className="w-[2.5px] h-full bg-[#B94B3E] rounded-full animate-equalizer-3" />
+                      <span className="w-[2.5px] h-full bg-[#B94B3E] rounded-full animate-equalizer-4" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="text-[10px] font-mono font-semibold">PLAY AUDIO</span>
+                  </>
+                )}
+              </motion.button>
+            </Magnetic>
 
             {/* Let's Talk SvgButton */}
-            <SvgButton
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
-              onMouseEnter={playHover}
-              variant="primary"
-              icon={ArrowUpRight}
-              className="!py-2 !px-5 !text-xs"
-            >
-              Let's talk
-            </SvgButton>
+            <Magnetic strength={0.2} radius={80}>
+              <SvgButton
+                href="#contact"
+                onClick={(e) => handleNavClick(e, '#contact')}
+                onMouseEnter={playHover}
+                variant="primary"
+                icon={ArrowUpRight}
+                className="!py-2 !px-5 !text-xs"
+              >
+                Let's talk
+              </SvgButton>
+            </Magnetic>
           </div>
 
           {/* Mobile Menu Toggle */}
           <div className="flex md:hidden items-center gap-2">
             <button
-              onClick={toggleSound}
-              className="p-2 rounded-full bg-slate-100 text-slate-600"
+              onClick={() => {
+                if (toggleAudio) toggleAudio();
+              }}
+              className={`p-2 rounded-full border transition-all ${
+                soundPlaying
+                  ? 'bg-[#B94B3E]/10 border-[#B94B3E]/40 text-[#B94B3E]'
+                  : 'bg-slate-100 border-slate-200 text-slate-600'
+              }`}
               aria-label="Toggle Audio"
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#B94B3E]" /> : <VolumeX className="w-4 h-4" />}
+              {soundPlaying ? <Volume2 className="w-4 h-4 text-[#B94B3E]" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
             </button>
 
             <button

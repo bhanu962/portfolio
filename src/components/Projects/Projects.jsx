@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { projectsData } from '../../data/projectsData';
+import MagneticText from '../UI/MagneticText';
+import Magnetic from '../UI/Magnetic';
+import SpotlightCard from '../UI/SpotlightCard';
+import TextScramble from '../UI/TextScramble';
 
 export default function Projects({ playHover, playClick }) {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -41,7 +45,7 @@ export default function Projects({ playHover, playClick }) {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Selected projects & applications
+            <MagneticText text="Selected projects & applications" strength={0.3} radius={100} />
           </motion.h2>
         </div>
 
@@ -53,24 +57,28 @@ export default function Projects({ playHover, playClick }) {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <button
-            onClick={handlePrev}
-            onMouseEnter={playHover}
-            className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all"
-            aria-label="Previous Projects"
-            data-cursor="hover"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleNext}
-            onMouseEnter={playHover}
-            className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all"
-            aria-label="Next Projects"
-            data-cursor="hover"
-          >
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <Magnetic strength={0.25} radius={60}>
+            <button
+              onClick={handlePrev}
+              onMouseEnter={playHover}
+              className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+              aria-label="Previous Projects"
+              data-cursor="hover"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </Magnetic>
+          <Magnetic strength={0.25} radius={60}>
+            <button
+              onClick={handleNext}
+              onMouseEnter={playHover}
+              className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+              aria-label="Next Projects"
+              data-cursor="hover"
+            >
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </Magnetic>
         </motion.div>
       </div>
 
@@ -93,72 +101,89 @@ export default function Projects({ playHover, playClick }) {
             : {};
 
           return (
-            <CardComponent
+            <SpotlightCard
               key={project.id}
-              {...cardProps}
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              onMouseEnter={playHover}
-              className={`group relative rounded-3xl overflow-hidden cred-card flex flex-col no-underline block ${
-                hasLink ? 'cursor-pointer' : 'cursor-default'
-              }`}
+              className="rounded-3xl cred-card"
+              tilt={true}
+              spotlightColor="rgba(185, 75, 62, 0.14)"
             >
-              {/* Image Preview Container */}
-              <div className="relative w-full h-52 bg-slate-950 overflow-hidden border-b border-slate-100">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className={`w-full h-full object-cover transition-transform duration-500 ease-out ${
-                    hasLink ? 'group-hover:scale-105' : ''
-                  }`}
-                  loading="lazy"
-                />
+              <CardComponent
+                {...cardProps}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                onMouseEnter={playHover}
+                className={`group relative overflow-hidden flex flex-col no-underline block h-full ${
+                  hasLink ? 'cursor-pointer' : 'cursor-default'
+                }`}
+              >
+                {/* Image Preview Container with Holographic Scanline & Corner Brackets */}
+                <div className="relative w-full h-52 bg-slate-950 overflow-hidden border-b border-slate-100 group/img">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className={`w-full h-full object-cover transition-all duration-700 ease-out ${
+                      hasLink ? 'group-hover:scale-108 group-hover:brightness-105' : ''
+                    }`}
+                    loading="lazy"
+                  />
 
-                {/* Top-Right Icon (Only rendered if project has a live link) */}
-                {hasLink && (
-                  <div className="absolute top-3.5 right-3.5 p-2 rounded-full bg-white/95 backdrop-blur-md border border-white/40 text-slate-800 shadow-md group-hover:bg-[#B94B3E] group-hover:text-white transition-all">
-                    <ExternalLink className="w-3.5 h-3.5" />
+                  {/* 1. Holographic Laser Scanline on Hover */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#B94B3E]/15 to-transparent h-20 w-full animate-scanline opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* 2. Precision Laser Corner Brackets */}
+                  <div className="pointer-events-none absolute inset-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t-1.5 border-l-1.5 border-[#B94B3E]" />
+                    <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t-1.5 border-r-1.5 border-[#B94B3E]" />
+                    <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-1.5 border-l-1.5 border-[#B94B3E]" />
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-1.5 border-r-1.5 border-[#B94B3E]" />
                   </div>
-                )}
 
-                {/* Category Pill on Card */}
-                <div className="absolute bottom-3.5 left-4 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-white shadow-md">
-                  {project.category}
-                </div>
-              </div>
+                  {/* Top-Right Icon (Only rendered if project has a live link) */}
+                  {hasLink && (
+                    <div className="absolute top-3.5 right-3.5 p-2 rounded-full bg-white/95 backdrop-blur-md border border-white/40 text-slate-800 shadow-md group-hover:bg-[#B94B3E] group-hover:text-white transition-all">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </div>
+                  )}
 
-              {/* Card Content */}
-              <div className="p-6 flex flex-col justify-between flex-1 bg-white">
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <h3
-                      className={`text-xl font-bold font-display text-slate-900 tracking-tight transition-colors ${
-                        hasLink ? 'group-hover:text-[#B94B3E]' : ''
-                      }`}
-                    >
-                      {project.title}
-                    </h3>
+                  {/* Category Pill on Card */}
+                  <div className="absolute bottom-3.5 left-4 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-white shadow-md">
+                    <TextScramble text={project.category} triggerOnHover={true} />
                   </div>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
-                    {project.description}
-                  </p>
                 </div>
 
-                {/* Tech Stack Tag Pills */}
-                <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-mono font-medium text-slate-700"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                {/* Card Content */}
+                <div className="p-6 flex flex-col justify-between flex-1 bg-white">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <h3
+                        className={`text-xl font-bold font-display text-slate-900 tracking-tight transition-colors ${
+                          hasLink ? 'group-hover:text-[#B94B3E]' : ''
+                        }`}
+                      >
+                        <TextScramble text={project.title} triggerOnHover={true} />
+                      </h3>
+                    </div>
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                      {project.description}
+                    </p>
+                  </div>
+
+                  {/* Tech Stack Tag Pills */}
+                  <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-mono font-medium text-slate-700 transition-colors hover:bg-[#B94B3E]/10 hover:text-[#B94B3E]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </CardComponent>
+              </CardComponent>
+            </SpotlightCard>
           );
         })}
       </div>

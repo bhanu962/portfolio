@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 import { Download, Laptop } from 'lucide-react';
 import { Github, Linkedin, Instagram } from '../Icons/SocialIcons';
 import SvgButton from '../UI/SvgButton';
+import MagneticText from '../UI/MagneticText';
+import Magnetic from '../UI/Magnetic';
+import TextScramble from '../UI/TextScramble';
 import { personalInfo } from '../../data/personalInfo';
+import { speakWelcome } from '../../utils/speech';
 
 const dynamicPhrases = [
   'Full Stack Developer',
@@ -69,7 +73,7 @@ function TypingHeadline() {
   );
 }
 
-export default function Hero({ playHover, playClick }) {
+export default function Hero({ playHover, playClick, soundPlaying, toggleAudio }) {
   const handleDownloadCV = () => {
     if (playClick) playClick();
   };
@@ -79,64 +83,33 @@ export default function Hero({ playHover, playClick }) {
       id="home"
       className="relative min-h-[90vh] flex flex-col items-center justify-center pt-28 pb-16 px-6 md:px-12 overflow-hidden"
     >
-      {/* Left Vertical Social Dock - Anchored to Hero Section */}
-      <motion.div
-        className="absolute left-6 xl:left-12 top-1/2 -translate-y-1/2 z-20 hidden lg:flex flex-col items-start gap-3.5"
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.7, delay: 0.4 }}
-      >
-        <div className="w-px h-10 bg-slate-200 ml-5" />
-        
-        {socialDockItems.map((social) => {
-          const Icon = social.icon;
-          return (
-            <motion.a
-              key={social.name}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={playHover}
-              onClick={playClick}
-              whileTap={{ scale: 0.95 }}
-              className="group relative flex items-center h-10 px-3 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm hover:border-[#B94B3E]/50 hover:shadow-md hover:text-[#B94B3E] transition-all duration-300 ease-out text-slate-700 overflow-hidden cursor-pointer"
-              aria-label={social.name}
-              data-cursor="hover"
-            >
-              <div className="shrink-0 flex items-center justify-center">
-                <Icon className="w-4 h-4 text-slate-600 group-hover:text-[#B94B3E] transition-colors duration-300" />
-              </div>
-
-              <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 group-hover:ml-2 whitespace-nowrap text-xs font-display font-semibold tracking-wide text-slate-800 group-hover:text-[#B94B3E] transition-all duration-300 ease-out overflow-hidden">
-                {social.name}
-              </span>
-            </motion.a>
-          );
-        })}
-
-        <div className="w-px h-10 bg-slate-200 ml-5" />
-      </motion.div>
-
       {/* Main Hero Center Container */}
       <div className="max-w-4xl mx-auto text-center flex flex-col items-center z-10">
         
         {/* 1. Top Availability & Role Status Pill */}
-        <motion.div
-          className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm mb-6 cursor-pointer hover:border-[#B94B3E]/40 transition-colors"
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          onMouseEnter={playHover}
-          data-cursor="hover"
-        >
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-          </span>
-          <span className="text-xs font-mono font-semibold tracking-wide text-slate-700">
-            Narra Bhanu Sai Teja • Computer Science Engineer
-          </span>
-        </motion.div>
+        <Magnetic strength={0.2} radius={100}>
+          <motion.div
+            onClick={() => {
+              if (playClick) playClick();
+              if (toggleAudio) toggleAudio();
+            }}
+            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm mb-6 cursor-pointer hover:border-[#B94B3E]/40 hover:shadow-xs transition-all select-none group"
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            onMouseEnter={playHover}
+            title="Click to hear voice welcome"
+            data-cursor="hover"
+          >
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-mono font-semibold tracking-wide text-slate-700 group-hover:text-[#B94B3E] transition-colors">
+              <TextScramble text="Narra Bhanu Sai Teja • Computer Science Engineer" triggerOnHover={true} />
+            </span>
+          </motion.div>
+        </Magnetic>
 
         {/* 2. Zero Layout-Shift Headline: Fixed-Height Container */}
         <motion.div
@@ -145,9 +118,13 @@ export default function Hero({ playHover, playClick }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {/* Primary Static Lead Title */}
+          {/* Primary Static Lead Title with Magnetic Text Attraction */}
           <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-bold font-display tracking-tight text-slate-950 leading-tight">
-            Welcome to Bhanu Narra's Portfolio
+            <MagneticText
+              text="Welcome to Bhanu Narra's Portfolio"
+              strength={0.3}
+              radius={110}
+            />
           </h1>
 
           {/* Physically Locked Fixed-Height Container for the Animated Typing Line */}
@@ -172,14 +149,15 @@ export default function Hero({ playHover, playClick }) {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           {quickTechs.map((tech) => (
-            <span
-              key={tech.name}
-              onMouseEnter={playHover}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200/90 text-xs font-mono font-medium text-slate-700 shadow-xs hover:border-[#B94B3E]/40 hover:text-[#B94B3E] transition-all cursor-default"
-            >
-              <span>{tech.icon}</span>
-              <span>{tech.name}</span>
-            </span>
+            <Magnetic key={tech.name} strength={0.22} radius={80}>
+              <span
+                onMouseEnter={playHover}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-slate-200/90 text-xs font-mono font-medium text-slate-700 shadow-xs hover:border-[#B94B3E]/40 hover:text-[#B94B3E] transition-all cursor-default"
+              >
+                <span>{tech.icon}</span>
+                <TextScramble text={tech.name} triggerOnHover={true} />
+              </span>
+            </Magnetic>
           ))}
         </motion.div>
 
@@ -191,27 +169,62 @@ export default function Hero({ playHover, playClick }) {
           transition={{ duration: 0.6, delay: 0.35 }}
         >
           {/* Primary View Projects Button */}
-          <SvgButton
-            href="#projects"
-            variant="primary"
-            icon={Laptop}
-            onMouseEnter={playHover}
-            onClick={playClick}
-          >
-            View projects
-          </SvgButton>
+          <Magnetic strength={0.2} radius={90}>
+            <SvgButton
+              href="#projects"
+              variant="primary"
+              icon={Laptop}
+              onMouseEnter={playHover}
+              onClick={playClick}
+            >
+              View projects
+            </SvgButton>
+          </Magnetic>
 
           {/* Secondary Download CV Button - Downloads Resume PDF */}
-          <SvgButton
-            href="/assets/Bhanu_Sai_Teja_Narra_Resume.pdf"
-            download="Bhanu_Sai_Teja_Narra_Resume.pdf"
-            variant="secondary"
-            icon={Download}
-            onMouseEnter={playHover}
-            onClick={handleDownloadCV}
-          >
-            Download CV
-          </SvgButton>
+          <Magnetic strength={0.2} radius={90}>
+            <SvgButton
+              href="/assets/Bhanu_Sai_Teja_Narra_Resume.pdf"
+              download="Bhanu_Sai_Teja_Narra_Resume.pdf"
+              variant="secondary"
+              icon={Download}
+              onMouseEnter={playHover}
+              onClick={handleDownloadCV}
+            >
+              Download CV
+            </SvgButton>
+          </Magnetic>
+        </motion.div>
+
+        {/* 6. Clean Social Icons Row */}
+        <motion.div
+          className="flex items-center justify-center gap-3 mt-6"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          {socialDockItems.map((social) => {
+            const Icon = social.icon;
+            return (
+              <Magnetic key={social.name} strength={0.25} radius={60}>
+                <motion.a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={playHover}
+                  onClick={playClick}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-xs flex items-center justify-center text-slate-600 hover:text-[#B94B3E] hover:border-[#B94B3E]/40 hover:shadow-sm transition-all"
+                  aria-label={social.name}
+                  title={social.name}
+                  data-cursor="hover"
+                >
+                  <Icon className="w-4 h-4" />
+                </motion.a>
+              </Magnetic>
+            );
+          })}
         </motion.div>
       </div>
 

@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { experienceData } from '../../data/experienceData';
+import MagneticText from '../UI/MagneticText';
 
 export default function Experience({ playHover }) {
   const containerRef = useRef(null);
@@ -44,7 +45,7 @@ export default function Experience({ playHover }) {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Career trajectory & milestones
+          <MagneticText text="Career trajectory & milestones" strength={0.3} radius={100} />
         </motion.h2>
       </div>
 

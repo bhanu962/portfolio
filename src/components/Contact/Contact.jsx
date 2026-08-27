@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Mail, Send, Copy, Check, MapPin } from 'lucide-react';
 import { Github, Linkedin } from '../Icons/SocialIcons';
 import SvgButton from '../UI/SvgButton';
+import MagneticText from '../UI/MagneticText';
+import Magnetic from '../UI/Magnetic';
 import confetti from 'canvas-confetti';
 import { personalInfo } from '../../data/personalInfo';
 
@@ -66,7 +68,7 @@ export default function Contact({ playHover, playClick, playSuccess }) {
           </div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display tracking-tight text-slate-950 mb-6 leading-tight">
-            Let's create something extraordinary
+            <MagneticText text="Let's create something extraordinary" strength={0.3} radius={110} />
           </h2>
 
           <p className="text-slate-600 text-base leading-relaxed mb-8 font-normal">
@@ -74,15 +76,17 @@ export default function Contact({ playHover, playClick, playSuccess }) {
           </p>
 
           {/* Availability Status */}
-          <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm mb-4 flex items-center gap-3">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E06051] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#B94B3E]" />
-            </span>
-            <span className="text-xs font-medium text-slate-700 font-mono">
-              {personalInfo.availability}
-            </span>
-          </div>
+          <Magnetic strength={0.15} radius={90}>
+            <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm mb-4 flex items-center gap-3">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E06051] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#B94B3E]" />
+              </span>
+              <span className="text-xs font-medium text-slate-700 font-mono">
+                {personalInfo.availability}
+              </span>
+            </div>
+          </Magnetic>
 
           {/* Email Quick Copy */}
           <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-4 mb-6">
@@ -95,57 +99,67 @@ export default function Contact({ playHover, playClick, playSuccess }) {
               </span>
             </div>
 
-            <motion.button
-              onClick={handleCopyEmail}
-              onMouseEnter={playHover}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all shrink-0 cursor-pointer"
-              title="Copy Email"
-              data-cursor="hover"
-            >
-              {copied ? (
-                <Check className="w-4 h-4 text-emerald-600" />
-              ) : (
-                <Copy className="w-4 h-4 text-slate-600" />
-              )}
-            </motion.button>
+            <Magnetic strength={0.25} radius={50}>
+              <motion.button
+                onClick={handleCopyEmail}
+                onMouseEnter={playHover}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all shrink-0 cursor-pointer"
+                title="Copy Email"
+                data-cursor="hover"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-emerald-600" />
+                ) : (
+                  <Copy className="w-4 h-4 text-slate-600" />
+                )}
+              </motion.button>
+            </Magnetic>
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center gap-3">
-            <motion.a
-              href={personalInfo.socials.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={playHover}
-              onClick={playClick}
-              whileHover={{ scale: 1.15, rotate: 6, y: -2 }}
-              whileTap={{ scale: 0.92 }}
-              className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-[#B94B3E] hover:border-[#B94B3E]/40 shadow-sm transition-colors"
-              data-cursor="hover"
-              aria-label="GitHub"
-            >
-              <Github className="w-4 h-4" />
-            </motion.a>
+          {/* Social Links & Location Badge */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="flex items-center gap-2">
+              <Magnetic strength={0.25} radius={60}>
+                <motion.a
+                  href={personalInfo.socials.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={playHover}
+                  onClick={playClick}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-[#B94B3E] hover:border-[#B94B3E]/40 shadow-xs flex items-center justify-center transition-colors cursor-pointer"
+                  data-cursor="hover"
+                  aria-label="GitHub"
+                  title="GitHub"
+                >
+                  <Github className="w-4 h-4" />
+                </motion.a>
+              </Magnetic>
 
-            <motion.a
-              href={personalInfo.socials.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={playHover}
-              onClick={playClick}
-              whileHover={{ scale: 1.15, rotate: -6, y: -2 }}
-              whileTap={{ scale: 0.92 }}
-              className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-[#B94B3E] hover:border-[#B94B3E]/40 shadow-sm transition-colors"
-              data-cursor="hover"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-4 h-4" />
-            </motion.a>
+              <Magnetic strength={0.25} radius={60}>
+                <motion.a
+                  href={personalInfo.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onMouseEnter={playHover}
+                  onClick={playClick}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-[#B94B3E] hover:border-[#B94B3E]/40 shadow-xs flex items-center justify-center transition-colors cursor-pointer"
+                  data-cursor="hover"
+                  aria-label="LinkedIn"
+                  title="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </motion.a>
+              </Magnetic>
+            </div>
 
-            <div className="flex items-center gap-1.5 pl-2 text-xs font-mono text-slate-500">
-              <MapPin className="w-3.5 h-3.5 text-[#B94B3E]" />
+            <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white border border-slate-200/80 shadow-2xs text-xs font-mono text-slate-600">
+              <MapPin className="w-3.5 h-3.5 text-[#B94B3E] shrink-0" />
               <span>{personalInfo.location}</span>
             </div>
           </div>

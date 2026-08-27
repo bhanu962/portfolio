@@ -1,44 +1,165 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
+// Exact Website Brand Palette (Primary Coral, Light Coral, Dark Coral, Deep Slate, Charcoal Slate)
+const WEBSITE_PALETTE = [
+  '#B94B3E', // Signature Primary Coral
+  '#0F172A', // Deep Slate / Black
+  '#E06051', // Vibrant Light Coral
+  '#9E382D', // Deep Crimson Coral
+  '#1E293B', // Charcoal Slate
+  '#334155', // Medium Slate
+];
+
+// Dynamic Morphing Animation Modes for the pointer
+const POINTER_ANIMATION_MODES = [
+  {
+    name: 'circle-breath',
+    borderRadius: '50%',
+    rotate: 0,
+    animateScale: [1, 1.3, 1],
+    transitionDuration: 1.4,
+    symbols: ['x', '+', '*', '·'],
+  },
+  {
+    name: 'diamond-spin',
+    borderRadius: '3px',
+    rotate: 45,
+    animateScale: [1, 1.2, 1],
+    transitionDuration: 1.2,
+    symbols: ['✦', '✧', 'x', '+'],
+  },
+  {
+    name: 'squircle-pulse',
+    borderRadius: '32%',
+    rotate: 15,
+    animateScale: [0.95, 1.25, 0.95],
+    transitionDuration: 1.5,
+    symbols: ['{', '}', 'x', '·'],
+  },
+  {
+    name: 'hex-twinkle',
+    borderRadius: '4px',
+    rotate: 90,
+    animateScale: [1, 1.35, 1],
+    transitionDuration: 1.1,
+    symbols: ['*', '·', '✦', '+'],
+  },
+  {
+    name: 'starburst-morph',
+    borderRadius: '50%',
+    rotate: 180,
+    animateScale: [1.1, 0.9, 1.1],
+    transitionDuration: 1.3,
+    symbols: ['x', '·', '*', '+'],
+  },
+];
+
 export default function CustomCursor() {
+  const [trail, setTrail] = useState([]);
   const [cursorText, setCursorText] = useState('');
   const [cursorVariant, setCursorVariant] = useState('default');
+  const [isMouseDown, setIsMouseDown] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
+  // Dynamic Color & Animation Mode State
+  const [currentColor, setCurrentColor] = useState(WEBSITE_PALETTE[0]);
+  const [currentMode, setCurrentMode] = useState(POINTER_ANIMATION_MODES[0]);
+
+  const lastPosRef = useRef({ x: -100, y: -100, time: 0 });
+  const timeoutsRef = useRef(new Set());
+  const currentModeRef = useRef(POINTER_ANIMATION_MODES[0]);
+
+  // Framer Motion Spring Values for ultra-fluid cursor tracking
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  const springConfig = { damping: 25, stiffness: 350, mass: 0.5 };
-  const trailSpringConfig = { damping: 20, stiffness: 180, mass: 0.8 };
+  // Fast spring for inner dot (crisp, zero lag)
+  const dotSpringConfig = { damping: 32, stiffness: 650, mass: 0.15 };
+  const dotX = useSpring(mouseX, dotSpringConfig);
+  const dotY = useSpring(mouseY, dotSpringConfig);
 
-  const cursorX = useSpring(mouseX, springConfig);
-  const cursorY = useSpring(mouseY, springConfig);
+  // 1. Synchronously cycle both Colors AND Animation Modes over time (every 1.8s)
+  useEffect(() => {
+    let modeIndex = 0;
+    const interval = setInterval(() => {
+      // Pick next website brand color
+      const nextColor = WEBSITE_PALETTE[Math.floor(Math.random() * WEBSITE_PALETTE.length)];
+      setCurrentColor(nextColor);
 
-  const trailX = useSpring(mouseX, trailSpringConfig);
-  const trailY = useSpring(mouseY, trailSpringConfig);
+      // Cycle to next morph animation mode
+      modeIndex = (modeIndex + 1) % POINTER_ANIMATION_MODES.length;
+      const nextMode = POINTER_ANIMATION_MODES[modeIndex];
+      currentModeRef.current = nextMode;
+      setCurrentMode(nextMode);
+    }, 1800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getSymbolForCurrentMode = () => {
+    const symbolList = currentModeRef.current.symbols;
+    const rand = Math.random();
+    if (rand < 0.7) return { char: symbolList[0], size: 19, weight: 800 };
+    if (rand < 0.85) return { char: symbolList[1], size: 17, weight: 700 };
+    if (rand < 0.95) return { char: symbolList[2], size: 18, weight: 800 };
+    return { char: symbolList[3], size: 21, weight: 900 };
+  };
 
   useEffect(() => {
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      setIsTouchDevice(true);
-      return;
-    }
+    document.body.classList.add('hide-cursor');
 
     const handleMouseMove = (e) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      const { clientX: x, clientY: y } = e;
+      mouseX.set(x);
+      mouseY.set(y);
+
       if (!isVisible) setIsVisible(true);
+
+      const now = performance.now();
+      const last = lastPosRef.current;
+      const distance = Math.hypot(x - last.x, y - last.y);
+
+      // Spawn symbol trail every 18px of movement
+      if (distance >= 18 || last.time === 0) {
+        lastPosRef.current = { x, y, time: now };
+
+        const symbolInfo = getSymbolForCurrentMode();
+        const color = WEBSITE_PALETTE[Math.floor(Math.random() * WEBSITE_PALETTE.length)];
+        const id = `${now}-${Math.random().toString(36).slice(2, 6)}`;
+
+        // 2-3px subtle organic offset
+        const offsetX = (Math.random() - 0.5) * 4;
+        const offsetY = (Math.random() - 0.5) * 4;
+
+        const newPoint = {
+          id,
+          x: x + offsetX,
+          y: y + offsetY,
+          char: symbolInfo.char,
+          size: symbolInfo.size,
+          weight: symbolInfo.weight,
+          color,
+        };
+
+        setTrail((prev) => {
+          const trimmed = prev.length >= 24 ? prev.slice(prev.length - 23) : prev;
+          return [...trimmed, newPoint];
+        });
+
+        const timeoutId = setTimeout(() => {
+          setTrail((prev) => prev.filter((p) => p.id !== id));
+          timeoutsRef.current.delete(timeoutId);
+        }, 1200);
+
+        timeoutsRef.current.add(timeoutId);
+      }
     };
 
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseDown = () => setIsMouseDown(true);
+    const handleMouseUp = () => setIsMouseDown(false);
 
-    window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-
-    const handleElementHover = (e) => {
+    const handleMouseOver = (e) => {
       const target = e.target.closest('[data-cursor]');
       if (target) {
         const type = target.getAttribute('data-cursor');
@@ -62,62 +183,110 @@ export default function CustomCursor() {
       }
     };
 
-    window.addEventListener('mouseover', handleElementHover);
+    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseEnter = () => setIsVisible(true);
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
 
     return () => {
+      document.body.classList.remove('hide-cursor');
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
-      window.removeEventListener('mouseover', handleElementHover);
+      timeoutsRef.current.forEach((tId) => clearTimeout(tId));
+      timeoutsRef.current.clear();
     };
-  }, [mouseX, mouseY, isVisible]);
-
-  if (isTouchDevice || !isVisible) return null;
+  }, [isVisible]);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
-      {/* Center Dot */}
+    <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden select-none">
+      {/* 1. Razor-Sharp Dotted Monospace Symbol Trail */}
+      {trail.map((point) => (
+        <span
+          key={point.id}
+          className="symbol-trail-point fixed select-none pointer-events-none will-change-transform"
+          style={{
+            left: `${point.x}px`,
+            top: `${point.y}px`,
+            color: point.color,
+            fontSize: `${point.size}px`,
+            fontWeight: point.weight,
+            fontFamily: "'Space Mono', 'JetBrains Mono', 'Courier New', monospace",
+            lineHeight: 1,
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale',
+            textRendering: 'geometricPrecision',
+          }}
+        >
+          {point.char}
+        </span>
+      ))}
+
+      {/* 2. Crystal-Clear Pointer with Synchronously Morphing Animations & Changing Colors */}
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#B94B3E] pointer-events-none shadow-sm"
+        className="fixed top-0 left-0 w-3.5 h-3.5 pointer-events-none border border-white/90 shadow-xs will-change-transform"
         style={{
-          x: cursorX,
-          y: cursorY,
+          x: dotX,
+          y: dotY,
           translateX: '-50%',
           translateY: '-50%',
+          backgroundColor: currentColor,
+          opacity: isVisible ? 1 : 0,
+          transition: 'background-color 0.6s ease, border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
         animate={{
-          scale: cursorVariant === 'hover' ? 1.4 : cursorVariant === 'view' ? 0 : 1,
-          opacity: cursorVariant === 'view' ? 0 : 1,
+          borderRadius: currentMode.borderRadius,
+          rotate: cursorVariant === 'hover' ? currentMode.rotate + 45 : currentMode.rotate,
+          scale:
+            cursorVariant === 'hover'
+              ? 1.7
+              : cursorVariant === 'view' || cursorVariant === 'click'
+              ? 0
+              : isMouseDown
+              ? 0.75
+              : currentMode.animateScale,
         }}
-        transition={{ duration: 0.15 }}
+        transition={{
+          rotate: { duration: 0.6, ease: 'easeOut' },
+          scale:
+            cursorVariant === 'hover' || isMouseDown
+              ? { duration: 0.15 }
+              : {
+                  duration: currentMode.transitionDuration,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                },
+        }}
       />
 
-      {/* Lagging Ring / View Badge */}
-      <motion.div
-        className={`fixed top-0 left-0 rounded-full pointer-events-none flex items-center justify-center transition-colors duration-200 ${
-          cursorVariant === 'view'
-            ? 'w-14 h-14 bg-slate-900 text-white font-mono text-[9px] font-bold tracking-widest shadow-lg'
-            : cursorVariant === 'hover'
-            ? 'w-10 h-10 border border-[#B94B3E] bg-red-50/50'
-            : 'w-7 h-7 border border-slate-400/50'
-        }`}
-        style={{
-          x: trailX,
-          y: trailY,
-          translateX: '-50%',
-          translateY: '-50%',
-        }}
-        animate={{
-          scale: cursorVariant === 'hover' ? 1.15 : cursorVariant === 'view' ? 1 : 1,
-        }}
-        transition={{ duration: 0.2 }}
-      >
-        {cursorText && (
-          <span className="text-white font-mono tracking-wider font-semibold">
+      {/* 3. Interactive View / Click Badge (Only on project cards) */}
+      {cursorText && (
+        <motion.div
+          className="fixed top-0 left-0 w-14 h-14 rounded-full pointer-events-none flex items-center justify-center bg-slate-950 text-white font-mono text-[9px] font-bold tracking-widest shadow-xl border border-white/20"
+          style={{
+            x: dotX,
+            y: dotY,
+            translateX: '-50%',
+            translateY: '-50%',
+          }}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.6 }}
+          transition={{ duration: 0.18 }}
+        >
+          <span className="text-white font-mono tracking-wider font-semibold text-[9px]">
             {cursorText}
           </span>
-        )}
-      </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }

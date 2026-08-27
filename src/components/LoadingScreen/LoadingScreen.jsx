@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { personalInfo } from '../../data/personalInfo';
+import { playWelcomeAudio } from '../../utils/speech';
 
 export default function LoadingScreen({ onComplete }) {
   const [progress, setProgress] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
 
-  // Dynamic real-time status steps
   const getStatusText = (val) => {
     if (val < 25) return 'INITIALIZING DIGITAL ENVIRONMENT...';
     if (val < 55) return 'LOADING PROJECTS & SYSTEM DATA...';
@@ -16,28 +16,29 @@ export default function LoadingScreen({ onComplete }) {
   };
 
   useEffect(() => {
-    // Total duration around 2.8s for a real, satisfying loading journey
+    // Total duration ~2.2s
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setTimeout(() => {
             setIsFinished(true);
+            // Trigger first-time audio playback
+            playWelcomeAudio(false);
             setTimeout(() => {
               if (onComplete) onComplete();
-            }, 400);
-          }, 350);
+            }, 350);
+          }, 250);
           return 100;
         }
 
-        // Realistic variable speed increments
-        let step = Math.floor(Math.random() * 4) + 2;
-        if (prev > 75 && prev < 95) step = Math.floor(Math.random() * 3) + 1; // gentle suspense near end
+        let step = Math.floor(Math.random() * 4) + 3;
+        if (prev > 75 && prev < 95) step = Math.floor(Math.random() * 3) + 2;
         if (prev >= 95) step = 2;
 
         return Math.min(prev + step, 100);
       });
-    }, 60);
+    }, 45);
 
     return () => clearInterval(interval);
   }, [onComplete]);
@@ -52,7 +53,7 @@ export default function LoadingScreen({ onComplete }) {
             opacity: 0,
             scale: 1.03,
             filter: 'blur(12px)',
-            transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
+            transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] },
           }}
         >
           {/* Ambient Background Aura */}
@@ -60,7 +61,6 @@ export default function LoadingScreen({ onComplete }) {
 
           {/* Central Monogram with Dual Counter-Rotating Laser Orbit Rings */}
           <div className="relative w-24 h-24 flex items-center justify-center mb-6">
-            {/* Outer Counter-Clockwise Dashed Ring */}
             <motion.svg
               className="absolute inset-0 w-full h-full pointer-events-none"
               animate={{ rotate: -360 }}
@@ -77,7 +77,6 @@ export default function LoadingScreen({ onComplete }) {
               />
             </motion.svg>
 
-            {/* Inner Clockwise Glowing Laser Arc Ring */}
             <motion.svg
               className="absolute inset-0 w-full h-full pointer-events-none"
               animate={{ rotate: 360 }}
@@ -95,7 +94,6 @@ export default function LoadingScreen({ onComplete }) {
               />
             </motion.svg>
 
-            {/* Central Transparent Logo Box */}
             <motion.div
               className="w-14 h-14 rounded-2xl border-1.5 border-[#B94B3E]/50 flex items-center justify-center bg-white/90 shadow-sm backdrop-blur-md"
               initial={{ scale: 0.8, opacity: 0 }}

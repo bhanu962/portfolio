@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Calendar, Code2, Rocket, Heart, Lightbulb, Code } from 'lucide-react';
+import MagneticText from '../UI/MagneticText';
+import Magnetic from '../UI/Magnetic';
 import { personalInfo } from '../../data/personalInfo';
 
 function Counter({ target, suffix }) {
@@ -70,7 +72,11 @@ export default function About({ playHover }) {
 
           {/* Headline */}
           <h2 className="text-4xl sm:text-5xl font-bold font-display tracking-tight text-slate-900 mb-6 leading-tight">
-            Building with passion, precision & modern tools
+            <MagneticText
+              text="Building with passion, precision & modern tools"
+              strength={0.28}
+              radius={110}
+            />
           </h2>
 
           {/* Description */}
@@ -81,28 +87,29 @@ export default function About({ playHover }) {
           {/* 3 Statistic Cards */}
           <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {personalInfo.stats.map((stat, idx) => (
-              <motion.div
-                key={stat.label}
-                onMouseEnter={playHover}
-                className="cred-card p-4 rounded-2xl flex flex-col items-start"
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                data-cursor="hover"
-              >
-                <div className="p-2 rounded-xl bg-slate-100 mb-3">
-                  {getIcon(stat.icon)}
-                </div>
+              <Magnetic key={stat.label} strength={0.15} radius={90}>
+                <motion.div
+                  onMouseEnter={playHover}
+                  className="cred-card p-4 rounded-2xl flex flex-col items-start w-full h-full"
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: idx * 0.1 }}
+                  data-cursor="hover"
+                >
+                  <div className="p-2 rounded-xl bg-slate-100 mb-3">
+                    {getIcon(stat.icon)}
+                  </div>
 
-                <div className="text-2xl sm:text-3xl font-bold font-display text-slate-900 mb-1 tracking-tight">
-                  <Counter target={stat.value} suffix={stat.suffix} />
-                </div>
+                  <div className="text-2xl sm:text-3xl font-bold font-display text-slate-900 mb-1 tracking-tight">
+                    <Counter target={stat.value} suffix={stat.suffix} />
+                  </div>
 
-                <div className="text-xs text-slate-500 font-medium leading-snug">
-                  {stat.label}
-                </div>
-              </motion.div>
+                  <div className="text-xs text-slate-500 font-medium leading-snug">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              </Magnetic>
             ))}
           </div>
         </motion.div>
@@ -139,43 +146,49 @@ export default function About({ playHover }) {
             </div>
 
             {/* Floating Badge 1: Top Left */}
-            <motion.div
-              className="absolute -top-2 -left-3 sm:-left-6 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-md z-20"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              data-cursor="hover"
-            >
-              <Heart className="w-3.5 h-3.5 text-[#B94B3E] fill-[#B94B3E]" />
-              <span className="text-xs font-semibold text-slate-800">
-                Passionate Developer
-              </span>
-            </motion.div>
+            <Magnetic strength={0.3} radius={70} className="absolute -top-2 -left-3 sm:-left-6 z-20">
+              <motion.div
+                className="bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-md cursor-default"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                data-cursor="hover"
+              >
+                <Heart className="w-3.5 h-3.5 text-[#B94B3E] fill-[#B94B3E]" />
+                <span className="text-xs font-semibold text-slate-800">
+                  Passionate Developer
+                </span>
+              </motion.div>
+            </Magnetic>
 
             {/* Floating Badge 2: Bottom Left */}
-            <motion.div
-              className="absolute -bottom-2 -left-2 sm:-left-4 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-md z-20"
-              animate={{ y: [0, 5, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-              data-cursor="hover"
-            >
-              <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-              <span className="text-xs font-semibold text-slate-800">
-                Problem Solver
-              </span>
-            </motion.div>
+            <Magnetic strength={0.3} radius={70} className="absolute -bottom-2 -left-2 sm:-left-4 z-20">
+              <motion.div
+                className="bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-md cursor-default"
+                animate={{ y: [0, 5, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                data-cursor="hover"
+              >
+                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                <span className="text-xs font-semibold text-slate-800">
+                  Problem Solver
+                </span>
+              </motion.div>
+            </Magnetic>
 
             {/* Floating Badge 3: Right Middle */}
-            <motion.div
-              className="absolute top-1/2 -right-3 sm:-right-6 -translate-y-1/2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-md z-20"
-              animate={{ y: [0, -6, 0] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-              data-cursor="hover"
-            >
-              <Code className="w-3.5 h-3.5 text-[#B94B3E]" />
-              <span className="text-xs font-semibold text-slate-800">
-                Clean Code
-              </span>
-            </motion.div>
+            <Magnetic strength={0.3} radius={70} className="absolute top-1/2 -right-3 sm:-right-6 -translate-y-1/2 z-20">
+              <motion.div
+                className="bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 border border-slate-200 shadow-md cursor-default"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                data-cursor="hover"
+              >
+                <Code className="w-3.5 h-3.5 text-[#B94B3E]" />
+                <span className="text-xs font-semibold text-slate-800">
+                  Clean Code
+                </span>
+              </motion.div>
+            </Magnetic>
           </div>
         </motion.div>
       </div>
