@@ -25,9 +25,18 @@ export default function Footer({ playHover, playClick }) {
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToTop = () => {
+  const scrollToTop = (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     if (playClick) playClick();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const homeElement = document.getElementById('home');
+    if (homeElement) {
+      homeElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -41,7 +50,7 @@ export default function Footer({ playHover, playClick }) {
               onClick={scrollToTop}
               onMouseEnter={playHover}
               className="flex items-center gap-2 group cursor-pointer select-none bg-transparent"
-              data-cursor="click"
+              data-cursor="home"
             >
               {/* Transparent Icon Logo Box */}
               <div className="w-7 h-7 rounded-lg border border-[#B94B3E]/40 flex items-center justify-center bg-transparent group-hover:border-[#B94B3E] transition-all">

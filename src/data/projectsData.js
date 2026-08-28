@@ -8,7 +8,7 @@ export const projectsData = [
     category: "Full Stack & E-Commerce",
     image: "/assets/project-kujipatalia.svg",
     demoUrl: "https://kujipatalia.onrender.com",
-    githubUrl: "",
+    githubUrl: "https://github.com/bhanu962",
     featured: true,
     accentColor: "#10B981",
     stats: {
@@ -26,7 +26,7 @@ export const projectsData = [
     category: "Frontend Web App",
     image: "/assets/project-tictactoe.svg",
     demoUrl: "",
-    githubUrl: "",
+    githubUrl: "https://github.com/bhanu962",
     featured: true,
     accentColor: "#00D2FF",
     stats: {
@@ -44,7 +44,7 @@ export const projectsData = [
     category: "Frontend Web App",
     image: "/assets/project-rockpaperscissors.svg",
     demoUrl: "",
-    githubUrl: "",
+    githubUrl: "https://github.com/bhanu962",
     featured: true,
     accentColor: "#A855F7",
     stats: {

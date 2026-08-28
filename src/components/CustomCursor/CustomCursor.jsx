@@ -1,112 +1,64 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
-// Exact Website Brand Palette (Primary Coral, Light Coral, Dark Coral, Deep Slate, Charcoal Slate)
+// Website Brand Palette (Primary Coral, Light Coral, Deep Crimson, Deep Slate, Charcoal Slate)
 const WEBSITE_PALETTE = [
   '#B94B3E', // Signature Primary Coral
-  '#0F172A', // Deep Slate / Black
   '#E06051', // Vibrant Light Coral
   '#9E382D', // Deep Crimson Coral
+  '#0F172A', // Deep Slate / Black
   '#1E293B', // Charcoal Slate
   '#334155', // Medium Slate
 ];
 
-// Dynamic Morphing Animation Modes for the pointer
-const POINTER_ANIMATION_MODES = [
-  {
-    name: 'circle-breath',
-    borderRadius: '50%',
-    rotate: 0,
-    animateScale: [1, 1.3, 1],
-    transitionDuration: 1.4,
-    symbols: ['x', '+', '*', '·'],
-  },
-  {
-    name: 'diamond-spin',
-    borderRadius: '3px',
-    rotate: 45,
-    animateScale: [1, 1.2, 1],
-    transitionDuration: 1.2,
-    symbols: ['✦', '✧', 'x', '+'],
-  },
-  {
-    name: 'squircle-pulse',
-    borderRadius: '32%',
-    rotate: 15,
-    animateScale: [0.95, 1.25, 0.95],
-    transitionDuration: 1.5,
-    symbols: ['{', '}', 'x', '·'],
-  },
-  {
-    name: 'hex-twinkle',
-    borderRadius: '4px',
-    rotate: 90,
-    animateScale: [1, 1.35, 1],
-    transitionDuration: 1.1,
-    symbols: ['*', '·', '✦', '+'],
-  },
-  {
-    name: 'starburst-morph',
-    borderRadius: '50%',
-    rotate: 180,
-    animateScale: [1.1, 0.9, 1.1],
-    transitionDuration: 1.3,
-    symbols: ['x', '·', '*', '+'],
-  },
-];
+// Solid Gemini-style 4-pointed sparkle stars
+const GEMINI_STAR = '✦';
+
+const getRandomStar = () => {
+  const size = Math.round(13 + Math.random() * 9);
+  const color = WEBSITE_PALETTE[Math.floor(Math.random() * WEBSITE_PALETTE.length)];
+  const rotation = Math.floor(Math.random() * 360);
+  return {
+    char: GEMINI_STAR,
+    size,
+    weight: 800,
+    color,
+    rotation,
+  };
+};
 
 export default function CustomCursor() {
   const [trail, setTrail] = useState([]);
-  const [cursorText, setCursorText] = useState('');
-  const [cursorVariant, setCursorVariant] = useState('default');
+  const [isHoveringLink, setIsHoveringLink] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isCircleFaded, setIsCircleFaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-
-  // Dynamic Color & Animation Mode State
-  const [currentColor, setCurrentColor] = useState(WEBSITE_PALETTE[0]);
-  const [currentMode, setCurrentMode] = useState(POINTER_ANIMATION_MODES[0]);
 
   const lastPosRef = useRef({ x: -100, y: -100, time: 0 });
   const timeoutsRef = useRef(new Set());
-  const currentModeRef = useRef(POINTER_ANIMATION_MODES[0]);
   const isTouchActiveRef = useRef(false);
   const fadeTimeoutRef = useRef(null);
+  const circleFadeTimeoutRef = useRef(null);
 
-  // Framer Motion Spring Values for ultra-fluid cursor tracking
+  // Framer Motion Spring Values for fluid cursor tracking
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // Fast spring for inner dot (crisp, zero lag)
-  const dotSpringConfig = { damping: 32, stiffness: 650, mass: 0.15 };
-  const dotX = useSpring(mouseX, dotSpringConfig);
-  const dotY = useSpring(mouseY, dotSpringConfig);
+  // Fast spring for cursor pointer (ultra crisp, zero lag)
+  const pointerSpringConfig = { damping: 36, stiffness: 780, mass: 0.1 };
+  const pointerX = useSpring(mouseX, pointerSpringConfig);
+  const pointerY = useSpring(mouseY, pointerSpringConfig);
 
-  // 1. Synchronously cycle both Colors AND Animation Modes over time (every 1.8s)
+  // Synchronize active cursor color globally for click sparks
   useEffect(() => {
-    let modeIndex = 0;
-    const interval = setInterval(() => {
-      const nextColor = WEBSITE_PALETTE[Math.floor(Math.random() * WEBSITE_PALETTE.length)];
-      setCurrentColor(nextColor);
-
-      modeIndex = (modeIndex + 1) % POINTER_ANIMATION_MODES.length;
-      const nextMode = POINTER_ANIMATION_MODES[modeIndex];
-      currentModeRef.current = nextMode;
-      setCurrentMode(nextMode);
-    }, 1800);
-
-    return () => clearInterval(interval);
+    document.documentElement.style.setProperty('--cursor-color', '#B94B3E');
+    if (typeof window !== 'undefined') {
+      window.__activeCursorColor = '#B94B3E';
+    }
   }, []);
 
-  const getSymbolForCurrentMode = () => {
-    const symbolList = currentModeRef.current.symbols;
-    const rand = Math.random();
-    if (rand < 0.7) return { char: symbolList[0], size: 19, weight: 800 };
-    if (rand < 0.85) return { char: symbolList[1], size: 17, weight: 700 };
-    if (rand < 0.95) return { char: symbolList[2], size: 18, weight: 800 };
-    return { char: symbolList[3], size: 21, weight: 900 };
-  };
-
   useEffect(() => {
+    document.documentElement.classList.add('hide-cursor');
     document.body.classList.add('hide-cursor');
 
     const processPointerMove = (x, y) => {
@@ -123,40 +75,48 @@ export default function CustomCursor() {
       const last = lastPosRef.current;
       const distance = Math.hypot(x - last.x, y - last.y);
 
-      // Spawn symbol trail every 18px of movement
-      if (distance >= 18 || last.time === 0) {
-        lastPosRef.current = { x, y, time: now };
-
-        const symbolInfo = getSymbolForCurrentMode();
-        const color = WEBSITE_PALETTE[Math.floor(Math.random() * WEBSITE_PALETTE.length)];
+      // Spawn sparkling star trail only behind the movement path (never on the cursor)
+      if (last.time > 0 && distance >= 22) {
+        const starInfo = getRandomStar();
         const id = `${now}-${Math.random().toString(36).slice(2, 6)}`;
 
-        // 2-3px subtle organic offset
-        const offsetX = (Math.random() - 0.5) * 4;
-        const offsetY = (Math.random() - 0.5) * 4;
+        // Spawn safely in the trailing wake at the previous location left behind
+        const spawnX = last.x + (Math.random() - 0.5) * 6;
+        const spawnY = last.y + (Math.random() - 0.5) * 6;
 
         const newPoint = {
           id,
-          x: x + offsetX,
-          y: y + offsetY,
-          char: symbolInfo.char,
-          size: symbolInfo.size,
-          weight: symbolInfo.weight,
-          color,
+          x: spawnX,
+          y: spawnY,
+          ...starInfo,
         };
 
         setTrail((prev) => {
-          const trimmed = prev.length >= 24 ? prev.slice(prev.length - 23) : prev;
+          const trimmed = prev.length >= 20 ? prev.slice(prev.length - 19) : prev;
           return [...trimmed, newPoint];
         });
 
         const timeoutId = setTimeout(() => {
           setTrail((prev) => prev.filter((p) => p.id !== id));
           timeoutsRef.current.delete(timeoutId);
-        }, 1200);
+        }, 750);
 
         timeoutsRef.current.add(timeoutId);
+        lastPosRef.current = { x, y, time: now };
+      } else if (last.time === 0) {
+        lastPosRef.current = { x, y, time: now };
       }
+    };
+
+    const triggerCircleFade = () => {
+      setIsCircleFaded(true);
+      if (circleFadeTimeoutRef.current) {
+        clearTimeout(circleFadeTimeoutRef.current);
+      }
+      // Fade circle back in after snappy 260ms (zero lag, right as click sparks settle)
+      circleFadeTimeoutRef.current = setTimeout(() => {
+        setIsCircleFaded(false);
+      }, 260);
     };
 
     // Mouse Event Handlers
@@ -164,7 +124,11 @@ export default function CustomCursor() {
       processPointerMove(e.clientX, e.clientY);
     };
 
-    const handleMouseDown = () => setIsMouseDown(true);
+    const handleMouseDown = () => {
+      setIsMouseDown(true);
+      triggerCircleFade();
+    };
+
     const handleMouseUp = () => setIsMouseDown(false);
 
     // Mobile / Touch Event Handlers
@@ -173,6 +137,7 @@ export default function CustomCursor() {
         isTouchActiveRef.current = true;
         const touch = e.touches[0];
         setIsMouseDown(true);
+        triggerCircleFade();
         processPointerMove(touch.clientX, touch.clientY);
       }
     };
@@ -191,31 +156,16 @@ export default function CustomCursor() {
         if (!isTouchActiveRef.current) {
           setIsVisible(false);
         }
-      }, 1200);
+      }, 900);
     };
 
     const handleMouseOver = (e) => {
-      const target = e.target.closest('[data-cursor]');
-      if (target) {
-        const type = target.getAttribute('data-cursor');
-        setCursorVariant(type);
-        if (type === 'view') {
-          setCursorText('VIEW');
-        } else if (type === 'click') {
-          setCursorText('OPEN');
-        } else {
-          setCursorText('');
-        }
-      } else {
-        const isInteractive = e.target.closest('a, button, input, textarea, select, [role="button"]');
-        if (isInteractive) {
-          setCursorVariant('hover');
-          setCursorText('');
-        } else {
-          setCursorVariant('default');
-          setCursorText('');
-        }
-      }
+      const isInteractive = Boolean(
+        e.target.closest(
+          'a, button, input, textarea, select, [role="button"], [data-cursor], [onclick], .cursor-pointer, .group'
+        )
+      );
+      setIsHoveringLink(isInteractive);
     };
 
     const handleMouseLeave = () => setIsVisible(false);
@@ -232,10 +182,11 @@ export default function CustomCursor() {
     // Mobile Touch Listeners
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
-    window.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchcancel', handleTouchEnd);
 
     return () => {
+      document.documentElement.classList.remove('hide-cursor');
       document.body.classList.remove('hide-cursor');
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
@@ -252,24 +203,27 @@ export default function CustomCursor() {
       timeoutsRef.current.forEach((tId) => clearTimeout(tId));
       timeoutsRef.current.clear();
       if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+      if (circleFadeTimeoutRef.current) clearTimeout(circleFadeTimeoutRef.current);
     };
   }, [isVisible]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden select-none">
-      {/* 1. Razor-Sharp Dotted Monospace Symbol Trail (Follows Mouse & Finger Drag) */}
+      {/* 1. Sparkling Star Mouse Trail in Website Accent Colors */}
       {trail.map((point) => (
         <span
           key={point.id}
-          className="symbol-trail-point fixed select-none pointer-events-none will-change-transform"
+          className="star-trail-point fixed select-none pointer-events-none will-change-transform"
           style={{
             left: `${point.x}px`,
             top: `${point.y}px`,
             color: point.color,
             fontSize: `${point.size}px`,
             fontWeight: point.weight,
-            fontFamily: "'Space Mono', 'JetBrains Mono', 'Courier New', monospace",
             lineHeight: 1,
+            textShadow: `0 0 8px ${point.color}80, 0 0 16px ${point.color}40`,
+            '--initial-rot': `${point.rotation}deg`,
+            fontFamily: "'Outfit', 'Inter', sans-serif",
             WebkitFontSmoothing: 'antialiased',
             MozOsxFontSmoothing: 'grayscale',
             textRendering: 'geometricPrecision',
@@ -279,63 +233,88 @@ export default function CustomCursor() {
         </span>
       ))}
 
-      {/* 2. Crystal-Clear Pointer with Synchronously Morphing Animations & Changing Colors */}
+      {/* 2. Interactive Arrowhead Cursor:
+             - Normal State: Transparent inside with Website Accent Gradient Border
+             - Clickable State: Accent Circle Ring (fades for 1s on click) + White Inside + Accent Border */}
       <motion.div
-        className="fixed top-0 left-0 w-3.5 h-3.5 pointer-events-none border border-white/90 shadow-xs will-change-transform"
+        className="fixed top-0 left-0 pointer-events-none will-change-transform z-10"
         style={{
-          x: dotX,
-          y: dotY,
-          translateX: '-50%',
-          translateY: '-50%',
-          backgroundColor: currentColor,
+          x: pointerX,
+          y: pointerY,
+          transformOrigin: '14px 14px',
+          translateX: '-14px',
+          translateY: '-14px',
           opacity: isVisible ? 1 : 0,
-          transition: 'background-color 0.6s ease, border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
         animate={{
-          borderRadius: currentMode.borderRadius,
-          rotate: cursorVariant === 'hover' ? currentMode.rotate + 45 : currentMode.rotate,
-          scale:
-            cursorVariant === 'hover'
-              ? 1.7
-              : cursorVariant === 'view' || cursorVariant === 'click'
-              ? 0
-              : isMouseDown
-              ? 0.75
-              : currentMode.animateScale,
+          scale: isMouseDown ? 0.88 : isHoveringLink ? 1.12 : 1,
+          rotate: isMouseDown ? -6 : isHoveringLink ? -3 : 0,
         }}
         transition={{
-          rotate: { duration: 0.6, ease: 'easeOut' },
-          scale:
-            cursorVariant === 'hover' || isMouseDown
-              ? { duration: 0.15 }
-              : {
-                  duration: currentMode.transitionDuration,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                },
+          scale: { duration: 0.15, ease: 'easeOut' },
+          rotate: { duration: 0.15, ease: 'easeOut' },
         }}
-      />
-
-      {/* 3. Interactive View / Click Badge (Only on project cards) */}
-      {cursorText && (
-        <motion.div
-          className="fixed top-0 left-0 w-14 h-14 rounded-full pointer-events-none flex items-center justify-center bg-slate-950 text-white font-mono text-[9px] font-bold tracking-widest shadow-xl border border-white/20"
-          style={{
-            x: dotX,
-            y: dotY,
-            translateX: '-50%',
-            translateY: '-50%',
-          }}
-          initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.6 }}
-          transition={{ duration: 0.18 }}
+      >
+        <svg
+          width="42"
+          height="42"
+          viewBox="0 0 42 42"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="drop-shadow-[0_3px_12px_rgba(185,75,62,0.45)] drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)] filter transition-all duration-150"
         >
-          <span className="text-white font-mono tracking-wider font-semibold text-[9px]">
-            {cursorText}
-          </span>
-        </motion.div>
-      )}
+          <defs>
+            {/* Website Signature Coral Accent Gradient */}
+            <linearGradient id="cursorBorderAccentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FA5252" />
+              <stop offset="35%" stopColor="#E03131" />
+              <stop offset="70%" stopColor="#B94B3E" />
+              <stop offset="100%" stopColor="#9E382D" />
+            </linearGradient>
+          </defs>
+
+          {/* Clickable Target Arc - Positioned at Back of Tip (Fades for 1 second upon click) */}
+          {isHoveringLink && (
+            <motion.path
+              d="M 15.4 17.6 A 5.7 5.7 0 1 1 17.6 15.4"
+              fill="none"
+              stroke="url(#cursorBorderAccentGradient)"
+              strokeWidth="2.0"
+              strokeLinecap="round"
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{
+                scale: isMouseDown ? 0.85 : 1,
+                opacity: isCircleFaded ? 0 : 1,
+              }}
+              exit={{ scale: 0.6, opacity: 0 }}
+              transition={{
+                opacity: { duration: isCircleFaded ? 0.1 : 0.22, ease: 'easeOut' },
+                scale: { duration: 0.14, ease: 'easeOut' },
+              }}
+            />
+          )}
+
+          {/* Transparent Arrowhead Body with Website Accent Border (100% Transparent Over Every Element) */}
+          <g>
+            <path
+              d="M 14.0 14.0 
+                 C 13.5 13.5, 14.3 12.8, 14.9 13.1 
+                 L 37.8 21.6 
+                 C 38.6 21.9, 38.6 23.0, 37.8 23.4 
+                 L 27.6 27.6 
+                 L 23.4 37.8 
+                 C 23.0 38.6, 21.9 38.6, 21.6 37.8 
+                 L 13.1 14.9 
+                 C 12.8 14.3, 13.5 13.5, 14.0 14.0 Z"
+              fill="none"
+              stroke="url(#cursorBorderAccentGradient)"
+              strokeWidth="2.2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+          </g>
+        </svg>
+      </motion.div>
     </div>
   );
 }

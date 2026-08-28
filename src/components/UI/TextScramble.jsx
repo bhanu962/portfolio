@@ -1,52 +1,58 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
-const CHARS = '01✦✧x+*◇▲<>_/#~=';
+const CIPHER_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>~';
 
 export default function TextScramble({
   text = '',
   className = '',
   triggerOnHover = true,
-  triggerOnMount = false,
-  speed = 30,
+  triggerOnMount = true,
+  duration = 300, // Exactly 0.3 second cipher animation (300ms)
   as: Component = 'span',
   ...props
 }) {
   const [displayText, setDisplayText] = useState(text);
   const [isScrambling, setIsScrambling] = useState(false);
-  const intervalRef = useRef(null);
+  const animFrameRef = useRef(null);
+  const startTimeRef = useRef(null);
 
-  const scramble = () => {
-    if (isScrambling) return;
+  const scramble = useCallback(() => {
+    if (!text) return;
     setIsScrambling(true);
+    startTimeRef.current = performance.now();
 
-    let iteration = 0;
-    const maxIterations = text.length * 2;
+    const updateFrame = (now) => {
+      const elapsed = now - startTimeRef.current;
+      const progress = Math.min(1, elapsed / duration);
 
-    if (intervalRef.current) clearInterval(intervalRef.current);
+      const resolvedLength = Math.floor(progress * text.length);
 
-    intervalRef.current = setInterval(() => {
-      setDisplayText(() =>
-        text
-          .split('')
-          .map((char, index) => {
-            if (char === ' ') return ' ';
-            if (index < iteration / 2) {
-              return text[index];
-            }
-            return CHARS[Math.floor(Math.random() * CHARS.length)];
-          })
-          .join('')
-      );
+      const nextText = text
+        .split('')
+        .map((char, index) => {
+          if (char === ' ') return ' ';
+          if (index < resolvedLength) {
+            return text[index];
+          }
+          // Scrambled cipher character
+          return CIPHER_CHARS[Math.floor(Math.random() * CIPHER_CHARS.length)];
+        })
+        .join('');
 
-      if (iteration >= maxIterations) {
-        clearInterval(intervalRef.current);
+      setDisplayText(nextText);
+
+      if (progress < 1) {
+        animFrameRef.current = requestAnimationFrame(updateFrame);
+      } else {
         setDisplayText(text);
         setIsScrambling(false);
+        animFrameRef.current = null;
       }
+    };
 
-      iteration += 1;
-    }, speed);
-  };
+    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    animFrameRef.current = requestAnimationFrame(updateFrame);
+  }, [text, duration]);
 
   useEffect(() => {
     if (triggerOnMount) {
@@ -54,10 +60,11 @@ export default function TextScramble({
     } else {
       setDisplayText(text);
     }
+
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [text]);
+  }, [text, triggerOnMount, scramble]);
 
   return (
     <Component

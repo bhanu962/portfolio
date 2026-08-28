@@ -82,7 +82,7 @@ export default function Navbar({ soundPlaying, toggleAudio, playHover, playClick
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="flex items-center gap-2.5 group cursor-pointer bg-transparent select-none"
-              data-cursor="click"
+              data-cursor="home"
             >
               {/* Transparent Icon Logo Box */}
               <div className="w-8 h-8 rounded-lg border-1.5 border-[#B94B3E]/40 flex items-center justify-center bg-transparent group-hover:border-[#B94B3E] transition-all">

@@ -192,37 +192,49 @@ h1, h2, h3, h4, .font-display {
   -webkit-text-fill-color: transparent;
 }
 
-/* Bold High-Visibility Symbol Mouse Trail Keyframes (1.2s fade & scale to 0) */
-@keyframes symbolTrailFade {
+/* Sparkling Star Mouse Trail Keyframes (0.9s smooth twinkle, rotation & fade) */
+@keyframes starTrailFade {
   0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--initial-rot, 0deg)) scale(0.3);
+  }
+  15% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: translate(-50%, -50%) rotate(calc(var(--initial-rot, 0deg) + 20deg)) scale(1.15);
   }
-  30% {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  65% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(0.7);
+  50% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) rotate(calc(var(--initial-rot, 0deg) + 45deg)) scale(0.85);
   }
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0);
+    transform: translate(-50%, -50%) rotate(calc(var(--initial-rot, 0deg) + 90deg)) scale(0.1);
   }
 }
 
-.symbol-trail-point {
-  animation: symbolTrailFade 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+.star-trail-point {
+  animation: starTrailFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   pointer-events: none;
   user-select: none;
+  will-change: transform, opacity;
 }
 
 @media (pointer: fine) {
+  html.hide-cursor,
+  html.hide-cursor *,
+  html.hide-cursor *::before,
+  html.hide-cursor *::after,
   body.hide-cursor,
+  body.hide-cursor *,
+  body.hide-cursor *::before,
+  body.hide-cursor *::after,
   body.hide-cursor a,
   body.hide-cursor button,
-  body.hide-cursor [role="button"] {
+  body.hide-cursor input,
+  body.hide-cursor textarea,
+  body.hide-cursor select,
+  body.hide-cursor [role="button"],
+  body.hide-cursor [data-cursor] {
     cursor: none !important;
   }
 }

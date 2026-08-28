@@ -7,7 +7,6 @@ import {
   Send,
   Volume2,
   VolumeX,
-  Sparkles,
   ExternalLink,
   Code2,
   Briefcase,
@@ -29,6 +28,8 @@ export default function CommandPalette({
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
+  const listRef = useRef(null);
+  const itemRefs = useRef([]);
 
   // Global Keyboard listener for Ctrl+K / ⌘K
   useEffect(() => {
@@ -47,13 +48,23 @@ export default function CommandPalette({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [playClick]);
 
+  // Lock background website scrolling when quick search is open
   useEffect(() => {
     if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.classList.add('lenis-stopped');
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('lenis-stopped');
       setQuery('');
       setSelectedIndex(0);
     }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('lenis-stopped');
+    };
   }, [isOpen]);
 
   const navigationItems = [
@@ -141,16 +152,6 @@ export default function CommandPalette({
       },
     },
     {
-      id: 'act-confetti',
-      label: 'Trigger Confetti Celebration 🎉',
-      icon: Sparkles,
-      category: 'Easter Eggs',
-      action: () => {
-        if (triggerConfetti) triggerConfetti();
-        setIsOpen(false);
-      },
-    },
-    {
       id: 'act-github',
       label: 'Open GitHub Profile',
       icon: ExternalLink,
@@ -198,6 +199,16 @@ export default function CommandPalette({
       )
     : navigationItems;
 
+  // Automatically scroll highlighted option into view
+  useEffect(() => {
+    if (isOpen && itemRefs.current[selectedIndex]) {
+      itemRefs.current[selectedIndex].scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth',
+      });
+    }
+  }, [selectedIndex, isOpen]);
+
   const handleKeyDownModal = (e) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -239,7 +250,11 @@ export default function CommandPalette({
       {/* Command Palette Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[99990] flex items-start justify-center pt-20 sm:pt-28 px-4">
+          <div
+            data-lenis-prevent="true"
+            onWheel={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[99990] flex items-start justify-center pt-20 sm:pt-28 px-4"
+          >
             {/* Backdrop blur */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -255,6 +270,7 @@ export default function CommandPalette({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              data-lenis-prevent="true"
               className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden z-10 flex flex-col max-h-[75vh]"
             >
               {/* Header Input Bar */}
@@ -273,14 +289,18 @@ export default function CommandPalette({
                 />
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 transition-colors"
+                  className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Items List */}
-              <div className="overflow-y-auto p-2 space-y-1 flex-1">
+              {/* Scrollable Items List */}
+              <div
+                ref={listRef}
+                data-lenis-prevent="true"
+                className="overflow-y-auto p-2 space-y-1 flex-1 overscroll-contain"
+              >
                 {filteredItems.length === 0 ? (
                   <div className="py-12 text-center text-slate-400 text-xs font-mono">
                     No matching commands found.
@@ -293,6 +313,7 @@ export default function CommandPalette({
                     return (
                       <button
                         key={item.id}
+                        ref={(el) => (itemRefs.current[index] = el)}
                         onClick={() => {
                           if (playClick) playClick();
                           item.action();

@@ -5,7 +5,7 @@ import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 import ConfettiBurst from './components/Confetti/ConfettiBurst';
 import AnimatedBackground from './components/Background/AnimatedBackground';
 import CustomCursor from './components/CustomCursor/CustomCursor';
-import ClickShockwave from './components/UI/ClickShockwave';
+import ClickSpark from './components/UI/ClickSpark';
 import ScrollHUD from './components/UI/ScrollHUD';
 import CommandPalette from './components/UI/CommandPalette';
 import Navbar from './components/Navbar/Navbar';
@@ -189,9 +189,6 @@ export default function App() {
       {/* Neat and Beautiful Custom Cursor & Interactive Symbol Trail */}
       <CustomCursor />
 
-      {/* Global Interactive Click Shockwaves */}
-      <ClickShockwave />
-
       {/* Live Minimalist Coordinate & Scroll Progress HUD */}
       <ScrollHUD />
 
@@ -207,38 +204,46 @@ export default function App() {
       {/* Multi-Layer Animated Canvas & Geometric Background */}
       <AnimatedBackground />
 
-      {/* Main Content Layout */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Navigation Bar */}
-        <Navbar
-          soundPlaying={soundPlaying}
-          toggleAudio={toggleAudio}
-          playHover={playHover}
-          playClick={playClick}
-        />
-
-        {/* Sections */}
-        <main className="flex-grow">
-          <Hero
-            playHover={playHover}
-            playClick={playClick}
+      {/* Global Interactive Click Sparks Synchronized with Active Cursor Color */}
+      <ClickSpark
+        sparkSize={12}
+        sparkRadius={20}
+        sparkCount={8}
+        duration={400}
+      >
+        {/* Main Content Layout */}
+        <div className="relative z-10 flex flex-col min-h-screen">
+          {/* Navigation Bar */}
+          <Navbar
             soundPlaying={soundPlaying}
             toggleAudio={toggleAudio}
-          />
-          <About playHover={playHover} playClick={playClick} />
-          <Skills playHover={playHover} playClick={playClick} />
-          <Projects playHover={playHover} playClick={playClick} />
-          <Experience playHover={playHover} playClick={playClick} />
-          <Contact
             playHover={playHover}
             playClick={playClick}
-            playSuccess={playSuccess}
           />
-        </main>
 
-        {/* Footer */}
-        <Footer playHover={playHover} playClick={playClick} />
-      </div>
+          {/* Sections */}
+          <main className="flex-grow">
+            <Hero
+              playHover={playHover}
+              playClick={playClick}
+              soundPlaying={soundPlaying}
+              toggleAudio={toggleAudio}
+            />
+            <About playHover={playHover} playClick={playClick} />
+            <Skills playHover={playHover} playClick={playClick} />
+            <Projects playHover={playHover} playClick={playClick} />
+            <Experience playHover={playHover} playClick={playClick} />
+            <Contact
+              playHover={playHover}
+              playClick={playClick}
+              playSuccess={playSuccess}
+            />
+          </main>
+
+          {/* Footer */}
+          <Footer playHover={playHover} playClick={playClick} />
+        </div>
+      </ClickSpark>
     </div>
   );
 }

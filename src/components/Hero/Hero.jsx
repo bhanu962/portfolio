@@ -6,6 +6,8 @@ import SvgButton from '../UI/SvgButton';
 import MagneticText from '../UI/MagneticText';
 import Magnetic from '../UI/Magnetic';
 import TextScramble from '../UI/TextScramble';
+import { SiPython, SiJavascript, SiReact, SiNodedotjs, SiMysql } from 'react-icons/si';
+import { FaJava } from 'react-icons/fa6';
 import { personalInfo } from '../../data/personalInfo';
 import { speakWelcome } from '../../utils/speech';
 
@@ -17,12 +19,30 @@ const dynamicPhrases = [
 ];
 
 const quickTechs = [
-  { name: 'Java', icon: '☕' },
-  { name: 'Python', icon: '🐍' },
-  { name: 'JavaScript', icon: '⚡' },
-  { name: 'React.js', icon: '⚛️' },
-  { name: 'Node.js', icon: '🟢' },
-  { name: 'SQL', icon: '💾' },
+  {
+    name: 'Java',
+    icon: <FaJava className="w-3.5 h-3.5 text-[#ED8B00]" />,
+  },
+  {
+    name: 'Python',
+    icon: <SiPython className="w-3.5 h-3.5 text-[#3776AB]" />,
+  },
+  {
+    name: 'JavaScript',
+    icon: <SiJavascript className="w-3.5 h-3.5 text-[#F7DF1E] bg-slate-900 rounded-xs" />,
+  },
+  {
+    name: 'React.js',
+    icon: <SiReact className="w-3.5 h-3.5 text-[#61DAFB]" />,
+  },
+  {
+    name: 'Node.js',
+    icon: <SiNodedotjs className="w-3.5 h-3.5 text-[#5FA04E]" />,
+  },
+  {
+    name: 'SQL',
+    icon: <SiMysql className="w-3.5 h-3.5 text-[#4479A1]" />,
+  },
 ];
 
 const socialDockItems = [
@@ -168,16 +188,17 @@ export default function Hero({ playHover, playClick, soundPlaying, toggleAudio }
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.35 }}
         >
-          {/* Primary View Projects Button */}
+          {/* Primary Projects Button */}
           <Magnetic strength={0.2} radius={90}>
             <SvgButton
               href="#projects"
               variant="primary"
               icon={Laptop}
+              className="w-44 justify-center text-center"
               onMouseEnter={playHover}
               onClick={playClick}
             >
-              View projects
+              Projects
             </SvgButton>
           </Magnetic>
 
@@ -188,10 +209,11 @@ export default function Hero({ playHover, playClick, soundPlaying, toggleAudio }
               download="Bhanu_Sai_Teja_Narra_Resume.pdf"
               variant="secondary"
               icon={Download}
+              className="w-44 justify-center text-center"
               onMouseEnter={playHover}
               onClick={handleDownloadCV}
             >
-              Download CV
+              Resume
             </SvgButton>
           </Magnetic>
         </motion.div>

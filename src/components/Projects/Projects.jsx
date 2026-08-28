@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { projectsData } from '../../data/projectsData';
 import MagneticText from '../UI/MagneticText';
@@ -7,18 +7,27 @@ import Magnetic from '../UI/Magnetic';
 import SpotlightCard from '../UI/SpotlightCard';
 import TextScramble from '../UI/TextScramble';
 
+const ITEMS_PER_PAGE = 3;
+
 export default function Projects({ playHover, playClick }) {
   const [activeSlide, setActiveSlide] = useState(0);
 
+  const totalPages = Math.ceil(projectsData.length / ITEMS_PER_PAGE);
+
   const handlePrev = () => {
     if (playClick) playClick();
-    setActiveSlide((prev) => (prev === 0 ? projectsData.length - 1 : prev - 1));
+    setActiveSlide((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
   };
 
   const handleNext = () => {
     if (playClick) playClick();
-    setActiveSlide((prev) => (prev === projectsData.length - 1 ? 0 : prev + 1));
+    setActiveSlide((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
   };
+
+  const currentProjects = projectsData.slice(
+    activeSlide * ITEMS_PER_PAGE,
+    (activeSlide + 1) * ITEMS_PER_PAGE
+  );
 
   return (
     <section id="projects" className="relative py-24 px-6 md:px-12 max-w-7xl mx-auto z-10">
@@ -49,158 +58,178 @@ export default function Projects({ playHover, playClick }) {
           </motion.h2>
         </div>
 
-        {/* Navigation Arrows */}
-        <motion.div
-          className="flex items-center gap-2.5"
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <Magnetic strength={0.25} radius={60}>
-            <button
-              onClick={handlePrev}
-              onMouseEnter={playHover}
-              className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-              aria-label="Previous Projects"
-              data-cursor="hover"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-          </Magnetic>
-          <Magnetic strength={0.25} radius={60}>
-            <button
-              onClick={handleNext}
-              onMouseEnter={playHover}
-              className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-              aria-label="Next Projects"
-              data-cursor="hover"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </Magnetic>
-        </motion.div>
-      </div>
-
-      {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-        {projectsData.slice(0, 3).map((project, idx) => {
-          const hasLink = Boolean(project.demoUrl);
-          const CardComponent = hasLink ? motion.a : motion.div;
-
-          const cardProps = hasLink
-            ? {
-                href: project.demoUrl,
-                target: '_blank',
-                rel: 'noopener noreferrer',
-                onClick: () => {
-                  if (playClick) playClick();
-                },
-                'data-cursor': 'click',
-              }
-            : {};
-
-          return (
-            <SpotlightCard
-              key={project.id}
-              className="rounded-3xl cred-card"
-              tilt={true}
-              spotlightColor="rgba(185, 75, 62, 0.14)"
-            >
-              <CardComponent
-                {...cardProps}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
+        {/* Navigation Arrows (Rendered when multiple project pages exist) */}
+        {totalPages > 1 && (
+          <motion.div
+            className="flex items-center gap-2.5"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <Magnetic strength={0.25} radius={60}>
+              <button
+                onClick={handlePrev}
                 onMouseEnter={playHover}
-                className={`group relative overflow-hidden flex flex-col no-underline block h-full ${
-                  hasLink ? 'cursor-pointer' : 'cursor-default'
-                }`}
+                className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+                aria-label="Previous Projects"
+                data-cursor="hover"
               >
-                {/* Image Preview Container with Holographic Scanline & Corner Brackets */}
-                <div className="relative w-full h-52 bg-slate-950 overflow-hidden border-b border-slate-100 group/img">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className={`w-full h-full object-cover transition-all duration-700 ease-out ${
-                      hasLink ? 'group-hover:scale-108 group-hover:brightness-105' : ''
-                    }`}
-                    loading="lazy"
-                  />
-
-                  {/* 1. Holographic Laser Scanline on Hover */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#B94B3E]/15 to-transparent h-20 w-full animate-scanline opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* 2. Precision Laser Corner Brackets */}
-                  <div className="pointer-events-none absolute inset-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t-1.5 border-l-1.5 border-[#B94B3E]" />
-                    <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t-1.5 border-r-1.5 border-[#B94B3E]" />
-                    <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-1.5 border-l-1.5 border-[#B94B3E]" />
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-1.5 border-r-1.5 border-[#B94B3E]" />
-                  </div>
-
-                  {/* Top-Right Icon (Only rendered if project has a live link) */}
-                  {hasLink && (
-                    <div className="absolute top-3.5 right-3.5 p-2 rounded-full bg-white/95 backdrop-blur-md border border-white/40 text-slate-800 shadow-md group-hover:bg-[#B94B3E] group-hover:text-white transition-all">
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </div>
-                  )}
-
-                  {/* Category Pill on Card */}
-                  <div className="absolute bottom-3.5 left-4 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-white shadow-md">
-                    <TextScramble text={project.category} triggerOnHover={true} />
-                  </div>
-                </div>
-
-                {/* Card Content */}
-                <div className="p-6 flex flex-col justify-between flex-1 bg-white">
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <h3
-                        className={`text-xl font-bold font-display text-slate-900 tracking-tight transition-colors ${
-                          hasLink ? 'group-hover:text-[#B94B3E]' : ''
-                        }`}
-                      >
-                        <TextScramble text={project.title} triggerOnHover={true} />
-                      </h3>
-                    </div>
-                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
-                      {project.description}
-                    </p>
-                  </div>
-
-                  {/* Tech Stack Tag Pills */}
-                  <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-mono font-medium text-slate-700 transition-colors hover:bg-[#B94B3E]/10 hover:text-[#B94B3E]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </CardComponent>
-            </SpotlightCard>
-          );
-        })}
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            </Magnetic>
+            <Magnetic strength={0.25} radius={60}>
+              <button
+                onClick={handleNext}
+                onMouseEnter={playHover}
+                className="p-2.5 rounded-full bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+                aria-label="Next Projects"
+                data-cursor="hover"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Magnetic>
+          </motion.div>
+        )}
       </div>
 
-      {/* Pagination Indicators */}
-      <div className="flex items-center justify-center gap-2 mt-10">
-        {[0, 1, 2, 3].map((dot) => (
-          <button
-            key={dot}
-            onClick={() => setActiveSlide(dot)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              activeSlide === dot ? 'w-6 bg-[#B94B3E]' : 'w-2 bg-slate-300 hover:bg-slate-400'
-            }`}
-            aria-label={`Go to slide ${dot + 1}`}
-          />
-        ))}
-      </div>
+      {/* Projects Grid with Smooth Page Transitions */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeSlide}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -15 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+        >
+          {currentProjects.map((project, idx) => {
+            const hasLink = Boolean(project.demoUrl);
+            const CardComponent = hasLink ? motion.a : motion.div;
+
+            const cardProps = hasLink
+              ? {
+                  href: project.demoUrl,
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                  onClick: () => {
+                    if (playClick) playClick();
+                  },
+                  'data-cursor': 'click',
+                }
+              : {};
+
+            return (
+              <SpotlightCard
+                key={project.id}
+                className="rounded-3xl cred-card"
+                tilt={true}
+                spotlightColor="rgba(185, 75, 62, 0.14)"
+              >
+                <CardComponent
+                  {...cardProps}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  onMouseEnter={playHover}
+                  className={`group relative overflow-hidden flex flex-col no-underline block h-full ${
+                    hasLink ? 'cursor-pointer' : 'cursor-default'
+                  }`}
+                >
+                  {/* Image Preview Container with Holographic Scanline & Corner Brackets */}
+                  <div className="relative w-full h-52 bg-slate-950 overflow-hidden border-b border-slate-100 group/img">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className={`w-full h-full object-cover transition-all duration-700 ease-out ${
+                        hasLink ? 'group-hover:scale-108 group-hover:brightness-105' : ''
+                      }`}
+                      loading="lazy"
+                    />
+
+                    {/* 1. Holographic Laser Scanline on Hover */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-[#B94B3E]/15 to-transparent h-20 w-full animate-scanline opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* 2. Precision Laser Corner Brackets */}
+                    <div className="pointer-events-none absolute inset-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span className="absolute top-0 left-0 w-2.5 h-2.5 border-t-1.5 border-l-1.5 border-[#B94B3E]" />
+                      <span className="absolute top-0 right-0 w-2.5 h-2.5 border-t-1.5 border-r-1.5 border-[#B94B3E]" />
+                      <span className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-1.5 border-l-1.5 border-[#B94B3E]" />
+                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-1.5 border-r-1.5 border-[#B94B3E]" />
+                    </div>
+
+                    {/* Top-Right Icon (Only rendered if project has a live link) */}
+                    {hasLink && (
+                      <div className="absolute top-3.5 right-3.5 p-2 rounded-full bg-white/95 backdrop-blur-md border border-white/40 text-slate-800 shadow-md group-hover:bg-[#B94B3E] group-hover:text-white transition-all">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+
+                    {/* Category Pill on Card */}
+                    <div className="absolute bottom-3.5 left-4 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-white shadow-md">
+                      <TextScramble text={project.category} triggerOnHover={true} />
+                    </div>
+                  </div>
+
+                  {/* Card Content */}
+                  <div className="p-6 flex flex-col justify-between flex-1 bg-white">
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <h3
+                          className={`text-xl font-bold font-display text-slate-900 tracking-tight transition-colors ${
+                            hasLink ? 'group-hover:text-[#B94B3E]' : ''
+                          }`}
+                        >
+                          <TextScramble text={project.title} triggerOnHover={true} />
+                        </h3>
+                      </div>
+                      <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    {/* Tech Stack Tag Pills */}
+                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2.5 py-1 rounded-md bg-slate-100 text-[11px] font-mono font-medium text-slate-700 transition-colors hover:bg-[#B94B3E]/10 hover:text-[#B94B3E]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </CardComponent>
+              </SpotlightCard>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Pagination Indicators (Rendered when multiple project pages exist) */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-10">
+          {Array.from({ length: totalPages }).map((_, dot) => (
+            <button
+              key={dot}
+              onClick={() => {
+                if (playClick) playClick();
+                setActiveSlide(dot);
+              }}
+              onMouseEnter={playHover}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                activeSlide === dot
+                  ? 'w-7 bg-[#B94B3E] shadow-[0_0_8px_rgba(185,75,62,0.4)]'
+                  : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+              }`}
+              aria-label={`Go to slide ${dot + 1}`}
+              data-cursor="hover"
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
