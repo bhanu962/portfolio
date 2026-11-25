@@ -76,6 +76,13 @@ export default function Footer({ playHover, playClick }) {
           </div>
         </div>
 
+        {/* Legal and support links */}
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-slate-500">
+          <a href="/bhanu-ai/privacy/" className="hover:text-[#B94B3E] transition-colors">Privacy</a>
+          <a href="/bhanu-ai/terms/" className="hover:text-[#B94B3E] transition-colors">Terms</a>
+          <a href="/bhanu-ai/support/" className="hover:text-[#B94B3E] transition-colors">Support</a>
+        </div>
+
         {/* Right: Back to Top */}
         <div className="flex items-center gap-4">
           <Magnetic strength={0.3} radius={60}>
